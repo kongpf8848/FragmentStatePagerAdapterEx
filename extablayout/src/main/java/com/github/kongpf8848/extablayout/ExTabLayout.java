@@ -15,52 +15,16 @@ import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Build.VERSION;
-import android.support.annotation.BoolRes;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.support.annotation.Dimension;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RestrictTo;
-import android.support.annotation.RestrictTo.Scope;
-import android.support.annotation.StringRes;
-import android.support.design.R.attr;
-import android.support.design.R.dimen;
-import android.support.design.R.layout;
-import android.support.design.R.style;
-import android.support.design.R.styleable;
-import android.support.design.animation.AnimationUtils;
-import android.support.design.internal.ThemeEnforcement;
-import android.support.design.internal.ViewUtils;
-import android.support.design.ripple.RippleUtils;
-import android.support.design.widget.TabItem;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.util.Pools.Pool;
-import android.support.v4.util.Pools.SimplePool;
-import android.support.v4.util.Pools.SynchronizedPool;
-import android.support.v4.view.MarginLayoutParamsCompat;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.PointerIconCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.DecorView;
-import android.support.v4.view.ViewPager.OnAdapterChangeListener;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.support.v4.widget.TextViewCompat;
-import android.support.v7.content.res.AppCompatResources;
-import android.support.v7.widget.TooltipCompat;
 import android.text.Layout;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,11 +36,50 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.BoolRes;
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.Dimension;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
+import androidx.annotation.RestrictTo.Scope;
+import androidx.annotation.StringRes;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.appcompat.widget.TooltipCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.util.Pools.Pool;
+import androidx.core.util.Pools.SimplePool;
+import androidx.core.util.Pools.SynchronizedPool;
+import androidx.core.view.GravityCompat;
+import androidx.core.view.MarginLayoutParamsCompat;
+import androidx.core.view.PointerIconCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.widget.TextViewCompat;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager.widget.ViewPager.DecorView;
+import androidx.viewpager.widget.ViewPager.OnAdapterChangeListener;
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
+
+import com.google.android.material.R.attr;
+import com.google.android.material.R.dimen;
+import com.google.android.material.R.style;
+import com.google.android.material.R.styleable;
+import com.google.android.material.animation.AnimationUtils;
+import com.google.android.material.internal.ThemeEnforcement;
+import com.google.android.material.internal.ViewUtils;
+import com.google.android.material.ripple.RippleUtils;
+import com.google.android.material.tabs.TabItem;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.LogManager;
 
 @DecorView
 public class ExTabLayout extends HorizontalScrollView {
@@ -157,6 +160,8 @@ public class ExTabLayout extends HorizontalScrollView {
     private boolean setupViewPagerImplicitly;
     private final Pool<ExTabLayout.TabView> tabViewPool;
 
+    private float mLastPositionOffsetSum;
+
     private static final String TAG = "TabLayout";
 
     public enum AnimType {
@@ -195,7 +200,7 @@ public class ExTabLayout extends HorizontalScrollView {
         this.setHorizontalScrollBarEnabled(false);
         this.slidingTabIndicator = new ExTabLayout.SlidingTabIndicator(context);
         super.addView(this.slidingTabIndicator, 0, new LayoutParams(-2, -1));
-        TypedArray a = ThemeEnforcement.obtainStyledAttributes(context, attrs, styleable.TabLayout, defStyleAttr, style.Widget_Design_TabLayout, new int[]{styleable.TabLayout_tabTextAppearance});
+        TypedArray a = ThemeEnforcement.obtainStyledAttributes(context, attrs, styleable.TabLayout, defStyleAttr, com.google.android.material.R.style.Widget_Design_TabLayout, new int[]{styleable.TabLayout_tabTextAppearance});
         this.slidingTabIndicator.setSelectedIndicatorHeight(a.getDimensionPixelSize(styleable.TabLayout_tabIndicatorHeight, -1));
         this.slidingTabIndicator.setSelectedIndicatorColor(a.getColor(styleable.TabLayout_tabIndicatorColor, 0));
         this.setSelectedTabIndicator(MaterialResources.getDrawable(context, a, styleable.TabLayout_tabIndicator));
@@ -207,11 +212,11 @@ public class ExTabLayout extends HorizontalScrollView {
         this.tabPaddingEnd = a.getDimensionPixelSize(styleable.TabLayout_tabPaddingEnd, this.tabPaddingEnd);
         this.tabPaddingBottom = a.getDimensionPixelSize(styleable.TabLayout_tabPaddingBottom, this.tabPaddingBottom);
         this.tabTextAppearance = a.getResourceId(styleable.TabLayout_tabTextAppearance, style.TextAppearance_Design_Tab);
-        TypedArray ta = context.obtainStyledAttributes(this.tabTextAppearance, android.support.v7.appcompat.R.styleable.TextAppearance);
+        TypedArray ta = context.obtainStyledAttributes(this.tabTextAppearance, androidx.appcompat.R.styleable.TextAppearance);
 
         try {
-            this.tabTextSize = (float)ta.getDimensionPixelSize(android.support.v7.appcompat.R.styleable.TextAppearance_android_textSize, 0);
-            this.tabTextColors = MaterialResources.getColorStateList(context, ta, android.support.v7.appcompat.R.styleable.TextAppearance_android_textColor);
+            this.tabTextSize = (float)ta.getDimensionPixelSize(androidx.appcompat.R.styleable.TextAppearance_android_textSize, 0);
+            this.tabTextColors = MaterialResources.getColorStateList(context, ta, androidx.appcompat.R.styleable.TextAppearance_android_textColor);
         } finally {
             ta.recycle();
         }
@@ -275,6 +280,52 @@ public class ExTabLayout extends HorizontalScrollView {
                 this.setSelectedTabView(roundedPosition);
             }
 
+        }
+    }
+
+    private void dispatch(int position,float positionOffset){
+
+        float currentPositionOffsetSum = position + positionOffset;
+        boolean leftToRight = false;
+        if (mLastPositionOffsetSum <= currentPositionOffsetSum) {
+            leftToRight = true;
+        }
+        {
+            int nextPosition = position + 1;
+            boolean normalDispatch = true;
+            if (positionOffset == 0.0f) {
+                if (leftToRight) {
+                    nextPosition = position - 1;
+                    normalDispatch = false;
+                }
+            }
+            if (normalDispatch) {
+                if (leftToRight) {
+                    dispatchOnLeave(position, positionOffset, true);
+                    dispatchOnEnter(nextPosition, positionOffset, true);
+                } else {
+                    dispatchOnLeave(nextPosition, 1.0f - positionOffset, false);
+                    dispatchOnEnter(position, 1.0f - positionOffset, false);
+                }
+            } else {
+                dispatchOnLeave(nextPosition, 1.0f - positionOffset, true);
+                dispatchOnEnter(position, 1.0f - positionOffset, true);
+            }
+        }
+
+    }
+
+    private void dispatchOnLeave(int index, float leavePercent, boolean leftToRight) {
+         if(index>=0 && index<this.slidingTabIndicator.getChildCount()){
+             ((TabView)this.slidingTabIndicator.getChildAt(index)).getTextView().setScaleX(1.2f-0.2f*leavePercent);
+             ((TabView)this.slidingTabIndicator.getChildAt(index)).getTextView().setScaleY(1.2f-0.2f*leavePercent);
+         }
+    }
+
+    private void dispatchOnEnter(int index, float enterPercent, boolean leftToRight) {
+        if(index>=0 && index<this.slidingTabIndicator.getChildCount()){
+            ((TabView)this.slidingTabIndicator.getChildAt(index)).getTextView().setScaleX(1.0f+0.2f*enterPercent);
+            ((TabView)this.slidingTabIndicator.getChildAt(index)).getTextView().setScaleY(1.0f+0.2f*enterPercent);
         }
     }
 
@@ -806,7 +857,7 @@ public class ExTabLayout extends HorizontalScrollView {
             lp.width = 0;
             lp.weight = 1.0F;
         } else {
-            lp.width = -2;
+            lp.width = ViewGroup.LayoutParams.WRAP_CONTENT;
             lp.weight = 0.0F;
         }
 
@@ -992,7 +1043,7 @@ public class ExTabLayout extends HorizontalScrollView {
             int nextWidth = nextChild != null ? nextChild.getWidth() : 0;
             int scrollBase = selectedChild.getLeft() + selectedWidth / 2 - this.getWidth() / 2;
             int scrollOffset = (int)((float)(selectedWidth + nextWidth) * 0.5F * positionOffset);
-            return ViewCompat.getLayoutDirection(this) == 0 ? scrollBase + scrollOffset : scrollBase - scrollOffset;
+            return ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_LTR? scrollBase + scrollOffset : scrollBase - scrollOffset;
         } else {
             return 0;
         }
@@ -1007,10 +1058,10 @@ public class ExTabLayout extends HorizontalScrollView {
         ViewCompat.setPaddingRelative(this.slidingTabIndicator, paddingStart, 0, 0, 0);
         switch(this.mode) {
             case 0:
-                this.slidingTabIndicator.setGravity(8388611);
+                this.slidingTabIndicator.setGravity(GravityCompat.START);
                 break;
             case 1:
-                this.slidingTabIndicator.setGravity(1);
+                this.slidingTabIndicator.setGravity(Gravity.CENTER_HORIZONTAL);
         }
 
         this.updateTabViews(true);
@@ -1153,6 +1204,8 @@ public class ExTabLayout extends HorizontalScrollView {
                 boolean updateText = this.scrollState != 2 || this.previousScrollState == 1;
                 boolean updateIndicator = this.scrollState != 2 || this.previousScrollState != 0;
                 tabLayout.setScrollPosition(position, positionOffset, updateText, updateIndicator);
+
+                tabLayout.dispatch(position,positionOffset);
             }
 
         }
@@ -1505,7 +1558,7 @@ public class ExTabLayout extends HorizontalScrollView {
         }
     }
 
-    class TabView extends LinearLayout {
+    public class TabView extends LinearLayout {
         private ExTabLayout.Tab tab;
         private TextView textView;
         private ImageView iconView;
@@ -1520,10 +1573,14 @@ public class ExTabLayout extends HorizontalScrollView {
             super(context);
             this.updateBackgroundDrawable(context);
             ViewCompat.setPaddingRelative(this, ExTabLayout.this.tabPaddingStart, ExTabLayout.this.tabPaddingTop, ExTabLayout.this.tabPaddingEnd, ExTabLayout.this.tabPaddingBottom);
-            this.setGravity(17);
+            this.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL);
             this.setOrientation(ExTabLayout.this.inlineLabel ? LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
             this.setClickable(true);
             ViewCompat.setPointerIcon(this, PointerIconCompat.getSystemIcon(this.getContext(), 1002));
+        }
+
+        public TextView getTextView() {
+            return textView;
         }
 
         private void updateBackgroundDrawable(Context context) {
@@ -1605,16 +1662,6 @@ public class ExTabLayout extends HorizontalScrollView {
 
             if (this.textView != null) {
                 this.textView.setSelected(selected);
-                if(selected){
-                    this.textView.setTypeface(Typeface.DEFAULT_BOLD);
-                    this.textView.setScaleX(1.2f);
-                    this.textView.setScaleY(1.2f);
-                }
-                else{
-                    this.textView.setTypeface(Typeface.DEFAULT);
-                    this.textView.setScaleX(1.0f);
-                    this.textView.setScaleY(1.0f);
-                }
             }
 
             if (this.iconView != null) {
@@ -1629,20 +1676,21 @@ public class ExTabLayout extends HorizontalScrollView {
 
         public void onInitializeAccessibilityEvent(AccessibilityEvent event) {
             super.onInitializeAccessibilityEvent(event);
-            event.setClassName(android.support.v7.app.ActionBar.Tab.class.getName());
+            event.setClassName(androidx.appcompat.app.ActionBar.Tab.class.getName());
         }
 
         @TargetApi(14)
         public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
             super.onInitializeAccessibilityNodeInfo(info);
-            info.setClassName(android.support.v7.app.ActionBar.Tab.class.getName());
+            info.setClassName(androidx.appcompat.app.ActionBar.Tab.class.getName());
         }
 
         public void onMeasure(int origWidthMeasureSpec, int origHeightMeasureSpec) {
             int specWidthSize = MeasureSpec.getSize(origWidthMeasureSpec);
             int specWidthMode = MeasureSpec.getMode(origWidthMeasureSpec);
+            Log.d(TAG, "onMeasure() called with: specWidthSize = [" + specWidthSize + "]");
             int maxWidth = ExTabLayout.this.getTabMaxWidth();
-            int widthMeasureSpec;
+            int widthMeasureSpec=origWidthMeasureSpec;
             if (maxWidth <= 0 || specWidthMode != 0 && specWidthSize <= maxWidth) {
                 widthMeasureSpec = origWidthMeasureSpec;
             } else {
@@ -1735,7 +1783,7 @@ public class ExTabLayout extends HorizontalScrollView {
 
             if (this.customView == null) {
                 if (this.iconView == null) {
-                    ImageView iconView = (ImageView) LayoutInflater.from(this.getContext()).inflate(layout.design_layout_tab_icon, this, false);
+                    ImageView iconView = (ImageView) LayoutInflater.from(this.getContext()).inflate(com.google.android.material.R.layout.design_layout_tab_icon, this, false);
                     this.addView(iconView, 0);
                     this.iconView = iconView;
                 }
@@ -1749,7 +1797,7 @@ public class ExTabLayout extends HorizontalScrollView {
                 }
 
                 if (this.textView == null) {
-                    TextView textView = (TextView) LayoutInflater.from(this.getContext()).inflate(layout.design_layout_tab_text, this, false);
+                    TextView textView = (TextView) LayoutInflater.from(this.getContext()).inflate(com.google.android.material.R.layout.design_layout_tab_text, this, false);
                     this.addView(textView);
                     this.textView = textView;
                     this.defaultMaxLines = TextViewCompat.getMaxLines(this.textView);
