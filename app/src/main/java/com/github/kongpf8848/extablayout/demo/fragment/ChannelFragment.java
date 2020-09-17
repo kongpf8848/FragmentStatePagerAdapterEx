@@ -1,4 +1,4 @@
-package com.github.kongpf8848.extablayout.demo;
+package com.github.kongpf8848.extablayout.demo.fragment;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
@@ -7,18 +7,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.github.kongpf8848.extablayout.demo.R;
+import com.github.kongpf8848.extablayout.demo.base.BaseFragment;
 
-public class TempFragment extends Fragment {
+
+public class ChannelFragment extends BaseFragment {
     private static final String ARG_PARAM1 = "param1";
 
     private String mParam1;
 
-    public TempFragment() {
+    public ChannelFragment() {
 
     }
 
-    public static TempFragment newInstance(String param1) {
-        TempFragment fragment = new TempFragment();
+    public static ChannelFragment newInstance(String param1) {
+        ChannelFragment fragment = new ChannelFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         fragment.setArguments(args);
