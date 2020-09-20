@@ -26,6 +26,6 @@
         android:layout_gravity="end"
         android:padding="10.0dip"
         android:scaleType="center"
-        android:src="@mipmap/ic_close" />
+        android:src="@drawable/ic_close" />
 
 </LinearLayout>

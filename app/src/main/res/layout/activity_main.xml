@@ -30,7 +30,7 @@
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:layout_gravity="center"
-                        android:src="@android:drawable/ic_menu_add" />
+                        android:src="@drawable/ic_nav_menu" />
 
                 </FrameLayout>
 
