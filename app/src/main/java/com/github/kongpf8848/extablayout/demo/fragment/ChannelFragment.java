@@ -15,6 +15,17 @@ public class ChannelFragment extends BaseFragment {
 
     private Channel channel;
 
+    @Override
+    protected String getLogTag() {
+        if(channel!=null){
+            return "ChannelFragment:"+channel.getChannelName();
+        }
+        else{
+            return super.getLogTag();
+        }
+
+    }
+
     public static ChannelFragment newInstance(Channel channel) {
         ChannelFragment fragment = new ChannelFragment();
         Bundle args = new Bundle();

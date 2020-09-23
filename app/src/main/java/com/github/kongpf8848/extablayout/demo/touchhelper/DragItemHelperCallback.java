@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class ItemDragHelperCallback extends ItemBaseHelperCallback {
+public class DragItemHelperCallback extends BaseItemHelperCallback {
 
-    public ItemDragHelperCallback(OnItemTouchHelperListener listener) {
+    public DragItemHelperCallback(OnItemTouchHelperListener listener) {
         super(listener);
     }
 
@@ -42,6 +42,12 @@ public class ItemDragHelperCallback extends ItemBaseHelperCallback {
     public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder srcViewHolder, @NonNull RecyclerView.ViewHolder targetViewHolder) {
         Log.d("JACK8", "onMove() called with: recyclerView = [" + recyclerView + "], srcViewHolder = [" + srcViewHolder + "], targetViewHolder = [" + targetViewHolder + "]");
         if (srcViewHolder.getItemViewType() != targetViewHolder.getItemViewType()) {
+            return false;
+        }
+        if(! (srcViewHolder instanceof OnItemTouchViewHolder) || !(targetViewHolder instanceof OnItemTouchViewHolder)){
+            return false;
+        }
+        if(!((OnItemTouchViewHolder)srcViewHolder).canDrag() || !((OnItemTouchViewHolder)targetViewHolder).canDrag()){
             return false;
         }
         if (listener != null) {

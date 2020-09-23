@@ -6,6 +6,8 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import butterknife.ButterKnife;
+
 public abstract class BaseActivity extends AppCompatActivity {
 
     protected abstract int getLayoutId();
@@ -15,6 +17,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(getClass().getSimpleName(),"onCreate called");
         setContentView(getLayoutId());
+        ButterKnife.bind(this);
         initData();
 
     }

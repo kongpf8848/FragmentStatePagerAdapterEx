@@ -1,5 +1,6 @@
 package com.github.kongpf8848.extablayout.demo.bean;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.github.kongpf8848.extablayout.demo.base.BaseEntity;
@@ -48,6 +49,20 @@ public class Channel extends BaseEntity {
 
     public void setChannelName(String channelName) {
         this.channelName = channelName;
+    }
+
+    @Override
+    public String toString() {
+        return "Channel{" +
+                "channelId='" + channelId + '\'' +
+                ", channelName='" + channelName + '\'' +
+                ", channelType=" + channelType +
+                ", viewType=" + viewType +
+                '}';
+    }
+
+    public boolean canDrag(){
+        return channelType==1;
     }
 
     @Override

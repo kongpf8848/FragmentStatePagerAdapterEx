@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Vibrator;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -24,7 +23,7 @@ import com.github.kongpf8848.extablayout.demo.channel.OnChannelListener;
 import com.github.kongpf8848.extablayout.demo.R;
 import com.github.kongpf8848.extablayout.demo.base.BaseRecyclerViewAdapter;
 import com.github.kongpf8848.extablayout.demo.bean.Channel;
-import com.github.kongpf8848.extablayout.demo.touchhelper.ItemDragHelperCallback;
+import com.github.kongpf8848.extablayout.demo.touchhelper.DragItemHelperCallback;
 import com.github.kongpf8848.extablayout.demo.touchhelper.OnItemTouchViewHolder;
 
 
@@ -35,8 +34,6 @@ import butterknife.OnClick;
 
 public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
 
-
-    public static final int TYPE_MY_TITLE = 0x01;
     public static final int TYPE_MY_CHANNEL = 0x02;
     public static final int TYPE_RECOMMEND_TITLE = 0x04;
     public static final int TYPE_RECOMMEND_CHANNEL = 0x08;
@@ -49,7 +46,7 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
     public ChannelAdapter(Context context, List<Channel> list, OnChannelListener onChannelListener) {
         super(context, list);
         this.onChannelListener = onChannelListener;
-        ItemDragHelperCallback callback = new ItemDragHelperCallback(onChannelListener);
+        DragItemHelperCallback callback = new DragItemHelperCallback(onChannelListener);
         this.mItemTouchHelper = new ItemTouchHelper(callback);
 
     }
@@ -65,10 +62,24 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
         return editMode;
     }
 
-    public void setEditMode(boolean editMode) {
-        this.editMode = editMode;
+    public void toogleEditMode() {
+        startEditMode(!this.editMode);
     }
 
+    private void startEditMode(boolean isEdit) {
+        this.editMode = isEdit;
+
+        int visibleChildCount = mRecyclerView.getChildCount();
+        for (int i = 0; i < visibleChildCount; i++) {
+            View view = mRecyclerView.getChildAt(i);
+            RecyclerView.ViewHolder viewHolder=mRecyclerView.getChildViewHolder(view);
+            if(viewHolder instanceof MyChannelViewHolder){
+                int position=mRecyclerView.getChildAdapterPosition(view);
+                Channel channel=getItem(position);
+                ((MyChannelViewHolder)viewHolder).bindView(position,channel);
+            }
+        }
+    }
 
     @Override
     public int getItemViewType(int position, Channel channel) {
@@ -77,35 +88,11 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
 
     @Override
     public void initViewType() {
-        addViewType(TYPE_MY_TITLE, R.layout.item_channel_my_title, MyTitleViewHolder.class);
         addViewType(TYPE_MY_CHANNEL, R.layout.item_channel, MyChannelViewHolder.class);
         addViewType(TYPE_RECOMMEND_TITLE, R.layout.item_channel_recommend_title, RecommendTitleViewHolder.class);
         addViewType(TYPE_RECOMMEND_CHANNEL, R.layout.item_channel, RecommendChannelViewHolder.class);
     }
 
-
-    public class MyTitleViewHolder extends BaseRecyclerViewHolder<Channel> {
-
-        @BindView(R.id.tv_tip)
-        TextView tv_tip;
-        @BindView(R.id.tv_edit)
-        TextView tv_edit;
-
-        public MyTitleViewHolder(View view) {
-            super(view);
-        }
-
-        @Override
-        public void bindView(int position, Channel channel) {
-
-        }
-
-        @OnClick(R.id.tv_edit)
-        public void onEdit() {
-            startEditMode(!editMode);
-        }
-
-    }
 
     public static class RecommendTitleViewHolder extends BaseRecyclerViewHolder<Channel> {
 
@@ -118,47 +105,6 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
         }
     }
 
-    private void startEditMode(boolean isEdit) {
-        this.editMode = isEdit;
-        int visibleChildCount = mRecyclerView.getChildCount();
-        for (int i = 0; i < visibleChildCount; i++) {
-            View view = mRecyclerView.getChildAt(i);
-            ImageView imgEdit = (ImageView) view.findViewById(R.id.iv_delete);
-            TextView tvName = (TextView) view.findViewById(R.id.tv_channel_name);
-            TextView tvEdit = (TextView) view.findViewById(R.id.tv_edit);
-            TextView tvTip = (TextView) view.findViewById(R.id.tv_tip);
-
-            if (imgEdit != null) {
-                imgEdit.setVisibility(imgEdit.getTag() != null && isEdit ? View.VISIBLE : View.GONE);
-            }
-
-            if (tvName != null) {
-                if (tvName.getTag() == null) return;
-                if (isEdit && (Boolean) tvName.getTag()) {
-                    tvName.setTextColor(Color.GRAY);
-                } else {
-                    tvName.setTextColor(Color.BLACK);
-                }
-            }
-
-            if (tvEdit != null) {
-                if (isEdit) {
-                    tvEdit.setText("完成");
-                } else {
-                    tvEdit.setText("编辑");
-                }
-            }
-
-            if (tvTip != null) {
-                if (isEdit) {
-                    tvTip.setText("拖动可以排序");
-                } else {
-                    tvTip.setText("点击进入频道");
-                }
-            }
-
-        }
-    }
 
     public class MyChannelViewHolder extends BaseRecyclerViewHolder<Channel> implements OnItemTouchViewHolder {
 
@@ -168,63 +114,39 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
         TextView tv_channel_name;
         @BindView(R.id.iv_delete)
         ImageView iv_delete;
-        private long startTime = 0;
+
+        private Channel channel;
 
         public MyChannelViewHolder(View view) {
             super(view);
         }
 
+
         @Override
         public void bindView(int position, Channel channel) {
+            this.channel=channel;
             tv_channel_name.setText(channel.getChannelName());
 
-            //头条，不可操作
-            if (channel.getChannelType() != 0) {
-                tv_channel_name.setTag(false);
-                iv_delete.setTag(true);
+            if (!canDrag()) {
+                tv_channel_name.setTextColor(Color.GRAY);
             } else {
-                tv_channel_name.setTag(true);
+                tv_channel_name.setTextColor(Color.BLACK);
             }
 
-
-            if (editMode) {
+            if (editMode && canDrag()) {
                 iv_delete.setVisibility(View.VISIBLE);
             } else {
                 iv_delete.setVisibility(View.GONE);
             }
-            if (channel.getChannelType() != 0) {
-                rl_channel.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        if (!isEditMode()) {
-                            startEditMode(true);
-                        }
-                        mItemTouchHelper.startDrag(MyChannelViewHolder.this);
-                        return false;
-                    }
-                });
-                rl_channel.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if (!isEditMode()) return false;
-                        switch (event.getAction()) {
-                            case MotionEvent.ACTION_DOWN:
-                                startTime = System.currentTimeMillis();
-                                break;
-                            case MotionEvent.ACTION_MOVE:
-                                if (System.currentTimeMillis() - startTime > 100) {
-                                    //当MOVE事件与DOWN事件的触发的间隔时间大于100ms时，则认为是拖拽starDrag
-                                    mItemTouchHelper.startDrag(MyChannelViewHolder.this);
-                                }
-                                break;
-                            case MotionEvent.ACTION_CANCEL:
-                            case MotionEvent.ACTION_UP:
-                                startTime = 0;
-                                break;
-                        }
-                        return false;
 
+
+            if (canDrag()) {
+                itemView.setOnLongClickListener(v -> {
+                    if (!isEditMode()) {
+                        startEditMode(true);
                     }
+                    mItemTouchHelper.startDrag(MyChannelViewHolder.this);
+                    return true;
                 });
             }
             rl_channel.setOnClickListener(new View.OnClickListener() {
@@ -271,11 +193,15 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
         }
 
         @Override
+        public boolean canDrag() {
+            return channel!=null && channel.canDrag();
+        }
+
+        @Override
         public void onItemSelected(RecyclerView.ViewHolder viewHolder) {
-            Log.d("JACK8", "onItemSelected,position:" + position);
+            Log.d("JACK8", "onItemSelected,position:" + viewHolder.getAdapterPosition());
             tv_channel_name.setBackgroundColor(Color.RED);
             tv_channel_name.animate().scaleXBy(0.2f).scaleYBy(0.2f).setDuration(200).start();
-
             Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
             if (vibrator != null) {
                 vibrator.vibrate(100);
@@ -348,6 +274,7 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
         }
 
     }
+
 
     private int getMyLastPosition() {
         for (int i = getItemCount() - 1; i >= 0; i--) {

@@ -2,6 +2,8 @@ package com.github.kongpf8848.extablayout.demo.channel;
 
 import com.github.kongpf8848.extablayout.demo.bean.Channel;
 
+import java.util.List;
+
 public interface IChannelManage {
 
     /**
@@ -11,5 +13,8 @@ public interface IChannelManage {
     void onSelectedChannel(Channel channel);
 
 
-    void onDragChannelFinish();
+    /**
+     * Channel添加,刪除,排序完成
+     */
+    void onDragChannelFinish(List<Channel> selectedChannelList,List<Channel>unSelectedChannelList);
 }

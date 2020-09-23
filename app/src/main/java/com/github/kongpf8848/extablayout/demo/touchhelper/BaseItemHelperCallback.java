@@ -7,10 +7,10 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-public abstract class ItemBaseHelperCallback extends ItemTouchHelper.Callback {
+public abstract class BaseItemHelperCallback extends ItemTouchHelper.Callback {
 
     protected OnItemTouchHelperListener listener;
-    public ItemBaseHelperCallback(OnItemTouchHelperListener listener) {
+    public BaseItemHelperCallback(OnItemTouchHelperListener listener) {
         this.listener = listener;
     }
 
@@ -35,7 +35,8 @@ public abstract class ItemBaseHelperCallback extends ItemTouchHelper.Callback {
             itemViewHolder.onItemClear(viewHolder);
         }
         super.clearView(recyclerView, viewHolder);
-
     }
+
+
 
 }
