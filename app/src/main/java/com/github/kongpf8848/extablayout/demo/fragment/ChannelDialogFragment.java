@@ -12,26 +12,25 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.kongpf8848.extablayout.demo.CommonPreferenceManager;
 import com.github.kongpf8848.extablayout.demo.base.BaseRecyclerViewAdapter;
 import com.github.kongpf8848.extablayout.demo.channel.IChannelManage;
-import com.github.kongpf8848.extablayout.demo.channel.OnChannelListener;
 import com.github.kongpf8848.extablayout.demo.R;
 import com.github.kongpf8848.extablayout.demo.adapter.ChannelAdapter;
 import com.github.kongpf8848.extablayout.demo.bean.Channel;
+import com.github.kongpf8848.extablayout.demo.touchhelper.OnItemTouchHelperListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import me.drakeet.multitype.MultiTypeAdapter;
 
-public class ChannelDialogFragment extends DialogFragment implements OnChannelListener {
+public class ChannelDialogFragment extends DialogFragment implements BaseRecyclerViewAdapter.OnItemClickListener<Channel>,OnItemTouchHelperListener {
 
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
@@ -42,7 +41,8 @@ public class ChannelDialogFragment extends DialogFragment implements OnChannelLi
 
     private List<Channel> selectedChannelList = new ArrayList<>();
     private List<Channel> unselectedChannelList = new ArrayList<>();
-    private List<Channel> allData = new ArrayList<>();
+    private List<Channel>allData = new ArrayList<>();
+    private MultiTypeAdapter multiTypeAdapter;
     private ChannelAdapter adapter;
 
 
@@ -68,8 +68,6 @@ public class ChannelDialogFragment extends DialogFragment implements OnChannelLi
         selectedChannelList=( List<Channel>)getArguments().getSerializable(CommonPreferenceManager.SELECTED_CHANNEL_DATA);
         unselectedChannelList=( List<Channel>)getArguments().getSerializable(CommonPreferenceManager.UNSELECTED_CHANNEL_DATA);
 
-        mRecyclerView.setHasFixedSize(true);
-
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 4);
         layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
@@ -82,17 +80,24 @@ public class ChannelDialogFragment extends DialogFragment implements OnChannelLi
             }
         });
 
-
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(layoutManager);
         allData.clear();
         if(selectedChannelList!=null && selectedChannelList.size()>0){
            allData.addAll(selectedChannelList);
         }
-        allData.add(new Channel("","", 0,ChannelAdapter.TYPE_RECOMMEND_TITLE));
+
         if(unselectedChannelList!=null && unselectedChannelList.size()>0){
            allData.addAll(unselectedChannelList);
         }
-        adapter = new ChannelAdapter(getActivity(), allData,this);
+        multiTypeAdapter=new MultiTypeAdapter();
+        //multiTypeAdapter.register(Channel.class).to(new MyChannelViewBinder(),)
+        multiTypeAdapter.setItems(allData);
+
+
+        adapter = new ChannelAdapter(getActivity(), allData);
+        adapter.setOnItemTouchHelperListener(this);
+        adapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(adapter);
     }
 
@@ -103,6 +108,11 @@ public class ChannelDialogFragment extends DialogFragment implements OnChannelLi
     public void onClickEdit()
     {
         adapter.toogleEditMode();
+        setEditStatus();
+
+    }
+
+    private void setEditStatus(){
         if(adapter.isEditMode()){
             tv_tip.setText("拖拽可以排序");
             tv_edit.setBackgroundResource(R.drawable.bg_shape_finish);
@@ -120,8 +130,6 @@ public class ChannelDialogFragment extends DialogFragment implements OnChannelLi
     @OnClick(R.id.iv_close)
     public void onClose() {
         List<Channel>selectedList=new ArrayList<>();
-
-
         for(Channel channel:allData){
             Log.d("JACK8","channel:"+channel);
         }
@@ -133,7 +141,14 @@ public class ChannelDialogFragment extends DialogFragment implements OnChannelLi
 
 
     @Override
+    public void onItemDragStart(int position) {
+        Log.d("JACK8", "onItemDragStart() called with: position = [" + position + "]");
+        setEditStatus();
+    }
+
+    @Override
     public void onItemMove(int starPosition, int endPosition) {
+        Log.d("JACK8", "onItemMove() called with: starPosition = [" + starPosition + "], endPosition = [" + endPosition + "]");
         Channel channel = allData.get(starPosition);
         allData.remove(starPosition);
         allData.add(endPosition, channel);
@@ -142,16 +157,21 @@ public class ChannelDialogFragment extends DialogFragment implements OnChannelLi
 
     @Override
     public void onItemDismiss(int position) {
-
+        Log.d("JACK8", "onItemDismiss() called with: position = [" + position + "]");
     }
 
     @Override
-    public void onSelected(Channel channel) {
+    public void onRecyclerViewItemClick(int position, Channel channel) {
         Log.d("JACK8","onFinish:"+channel.getChannelName());
         if(getActivity() instanceof IChannelManage){
             ((IChannelManage)getActivity()).onSelectedChannel(channel);
         }
         dismiss();
+    }
+
+    @Override
+    public void onRecyclerViewItemLongClick(int position, Channel channel) {
+
     }
 }
 

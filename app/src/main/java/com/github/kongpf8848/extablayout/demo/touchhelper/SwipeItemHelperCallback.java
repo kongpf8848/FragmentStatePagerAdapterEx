@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class SwipeItemHelperCallback extends BaseItemHelperCallback {
-    
+
     public SwipeItemHelperCallback(OnItemTouchHelperListener listener) {
         super(listener);
     }

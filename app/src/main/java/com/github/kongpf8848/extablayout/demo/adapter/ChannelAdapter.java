@@ -19,11 +19,11 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.kongpf8848.extablayout.demo.channel.OnChannelListener;
 import com.github.kongpf8848.extablayout.demo.R;
 import com.github.kongpf8848.extablayout.demo.base.BaseRecyclerViewAdapter;
 import com.github.kongpf8848.extablayout.demo.bean.Channel;
 import com.github.kongpf8848.extablayout.demo.touchhelper.DragItemHelperCallback;
+import com.github.kongpf8848.extablayout.demo.touchhelper.OnItemTouchHelperListener;
 import com.github.kongpf8848.extablayout.demo.touchhelper.OnItemTouchViewHolder;
 
 
@@ -41,21 +41,25 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
     private boolean editMode = false;
     private ItemTouchHelper mItemTouchHelper;
     private RecyclerView mRecyclerView;
-    private OnChannelListener onChannelListener;
+    private OnItemTouchHelperListener onItemTouchHelperListener;
 
-    public ChannelAdapter(Context context, List<Channel> list, OnChannelListener onChannelListener) {
+    public ChannelAdapter(Context context, List<Channel> list) {
         super(context, list);
-        this.onChannelListener = onChannelListener;
-        DragItemHelperCallback callback = new DragItemHelperCallback(onChannelListener);
-        this.mItemTouchHelper = new ItemTouchHelper(callback);
+    }
 
+    public void setOnItemTouchHelperListener(OnItemTouchHelperListener onItemTouchHelperListener){
+        this.onItemTouchHelperListener = onItemTouchHelperListener;
+        DragItemHelperCallback callback = new DragItemHelperCallback(onItemTouchHelperListener);
+        this.mItemTouchHelper = new ItemTouchHelper(callback);
     }
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         this.mRecyclerView = recyclerView;
-        mItemTouchHelper.attachToRecyclerView(recyclerView);
+        if(this.mItemTouchHelper!=null) {
+            mItemTouchHelper.attachToRecyclerView(recyclerView);
+        }
     }
 
     public boolean isEditMode() {
@@ -144,6 +148,9 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
                 itemView.setOnLongClickListener(v -> {
                     if (!isEditMode()) {
                         startEditMode(true);
+                        if(onItemTouchHelperListener!=null){
+                            onItemTouchHelperListener.onItemDragStart(position);
+                        }
                     }
                     mItemTouchHelper.startDrag(MyChannelViewHolder.this);
                     return true;
@@ -169,8 +176,8 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
                             }
                             channel.setViewType(ChannelAdapter.TYPE_RECOMMEND_CHANNEL);//改为推荐频道类型
 
-                            if (onChannelListener != null) {
-                                onChannelListener.onItemMove(currentPosition, recommendFirstPosition - 1);
+                            if (onItemTouchHelperListener != null) {
+                                onItemTouchHelperListener.onItemMove(currentPosition, recommendFirstPosition - 1);
                             }
                             startAnimation(currentView, targetX, targetY);
                         } else {
@@ -178,13 +185,13 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
                             if (recommendFirstPosition == RecyclerView.NO_POSITION) {
                                 recommendFirstPosition = getItemCount();
                             }
-                            if (onChannelListener != null) {
-                                onChannelListener.onItemMove(currentPosition, recommendFirstPosition - 1);
+                            if (onItemTouchHelperListener != null) {
+                                onItemTouchHelperListener.onItemMove(currentPosition, recommendFirstPosition - 1);
                             }
                         }
                     } else {
-                        if (onChannelListener != null) {
-                            onChannelListener.onSelected(channel);
+                        if (onItemTouchHelperListener != null) {
+                            //onItemTouchHelperListener.onSelected(channel);
                         }
                     }
                 }
@@ -258,8 +265,8 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
                     targetY = lastFourthView.getTop() + lastFourthView.getHeight();
                 }
                 channel.setViewType(TYPE_MY_CHANNEL);//改为推荐频道类型
-                if (onChannelListener != null) {
-                    onChannelListener.onItemMove(currentPosition, myLastPosition + 1);
+                if (onItemTouchHelperListener != null) {
+                    onItemTouchHelperListener.onItemMove(currentPosition, myLastPosition + 1);
                 }
                 startAnimation(currentView, targetX, targetY);
             } else {
@@ -267,8 +274,8 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
                 if (myLastPosition == RecyclerView.NO_POSITION) {
                     myLastPosition = 0;
                 }
-                if (onChannelListener != null) {
-                    onChannelListener.onItemMove(currentPosition, myLastPosition + 1);
+                if (onItemTouchHelperListener != null) {
+                    onItemTouchHelperListener.onItemMove(currentPosition, myLastPosition + 1);
                 }
             }
         }
