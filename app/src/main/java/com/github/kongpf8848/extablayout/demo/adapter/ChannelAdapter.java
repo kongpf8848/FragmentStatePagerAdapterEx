@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.kongpf8848.extablayout.demo.R;
-import com.github.kongpf8848.extablayout.demo.base.BaseEntity;
 import com.github.kongpf8848.extablayout.demo.base.BaseRecyclerViewAdapter;
 import com.github.kongpf8848.extablayout.demo.bean.Channel;
 import com.github.kongpf8848.extablayout.demo.channel.ChannelConst;
@@ -94,10 +93,13 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
     @Override
     public void initViewType() {
         addViewType(ChannelConst.TYPE_MY_CHANNEL, R.layout.item_channel, MyChannelViewHolder.class);
-        addViewType(ChannelConst.TYPE_MORE_TITLE, R.layout.item_more_title, RecommendTitleViewHolder.class);
-        addViewType(ChannelConst.TYPE_MORE_CHANNEL, R.layout.item_channel, RecommendChannelViewHolder.class);
+        addViewType(ChannelConst.TYPE_MORE_TITLE, R.layout.item_more_title, MoreTitleViewHolder.class);
+        addViewType(ChannelConst.TYPE_MORE_CHANNEL, R.layout.item_channel, MoreChannelViewHolder.class);
     }
 
+    /**
+     * 我的频道
+     */
     public class MyChannelViewHolder extends OnItemTouchViewHolder  {
 
         @BindView(R.id.rl_channel)
@@ -146,12 +148,14 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
                 @Override
                 public void onClick(View v) {
                     if (isEditMode()) {
-                        if (channel.getChannelType() == 0) return;
+                        if (!channel.canDrag()){
+                            return;
+                        }
                         int currentPosition = getAdapterPosition();
                         int recommendFirstPosition = getRecommendFirstPosition();
                         View currentView = mRecyclerView.getLayoutManager().findViewByPosition(currentPosition);
                         View targetView = mRecyclerView.getLayoutManager().findViewByPosition(recommendFirstPosition);
-                        if (mRecyclerView.indexOfChild(targetView) >= 0 && recommendFirstPosition != RecyclerView.NO_POSITION) {
+                        if (recommendFirstPosition != RecyclerView.NO_POSITION && mRecyclerView.indexOfChild(targetView) >= 0) {
                             RecyclerView.LayoutManager manager = mRecyclerView.getLayoutManager();
                             int spanCount = ((GridLayoutManager) manager).getSpanCount();
                             int targetX = targetView.getLeft();
@@ -161,7 +165,6 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
                                 targetY -= targetView.getHeight();
                             }
                             channel.setViewType(ChannelConst.TYPE_MORE_CHANNEL);//改为推荐频道类型
-
                             if (onItemTouchHelperListener != null) {
                                 onItemTouchHelperListener.onItemMove(currentPosition, recommendFirstPosition - 1);
                             }
@@ -169,6 +172,8 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
                         } else {
                             channel.setViewType(ChannelConst.TYPE_MORE_CHANNEL);
                             if (recommendFirstPosition == RecyclerView.NO_POSITION) {
+
+                                add(new Channel("","",0,ChannelConst.TYPE_MORE_TITLE));
                                 recommendFirstPosition = getItemCount();
                             }
                             if (onItemTouchHelperListener != null) {
@@ -177,7 +182,7 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
                         }
                     } else {
                         if (onItemTouchHelperListener != null) {
-                            //onItemTouchHelperListener.onSelected(channel);
+                            onItemTouchHelperListener.onItemClick(position);
                         }
                     }
                 }
@@ -193,8 +198,8 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
         @Override
         public void onItemSelected(RecyclerView.ViewHolder viewHolder) {
             Log.d("JACK8", "onItemSelected,position:" + viewHolder.getAdapterPosition());
-            tv_channel_name.setBackgroundColor(Color.RED);
-            tv_channel_name.animate().scaleXBy(0.2f).scaleYBy(0.2f).setDuration(200).start();
+            //tv_channel_name.setBackgroundColor(Color.RED);
+            //tv_channel_name.animate().scaleXBy(0.2f).scaleYBy(0.2f).setDuration(200).start();
             Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
             if (vibrator != null) {
                 vibrator.vibrate(100);
@@ -204,16 +209,17 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
         @Override
         public void onItemClear(RecyclerView.ViewHolder viewHolder) {
             Log.d("JACK8", "onItemFinish,position");
-            tv_channel_name.setBackgroundColor(Color.parseColor("#f3f5f4"));
-            tv_channel_name.animate().scaleXBy(-0.2f).scaleYBy(-0.2f).setDuration(200).start();
+            //tv_channel_name.setBackgroundColor(Color.parseColor("#f3f5f4"));
+           // tv_channel_name.animate().scaleXBy(-0.2f).scaleYBy(-0.2f).setDuration(200).start();
         }
     }
 
+    /**
+     * 更多频道标题
+     */
+    public static class MoreTitleViewHolder extends BaseRecyclerViewHolder<Channel> {
 
-
-    public static class RecommendTitleViewHolder extends BaseRecyclerViewHolder<Channel> {
-
-        public RecommendTitleViewHolder(View view) {
+        public MoreTitleViewHolder(View view) {
             super(view);
         }
 
@@ -222,8 +228,10 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
         }
     }
 
-
-    public class RecommendChannelViewHolder extends BaseRecyclerViewHolder<Channel> {
+    /**
+     * 更多频道标题
+     */
+    public class MoreChannelViewHolder extends BaseRecyclerViewHolder<Channel> {
 
         @BindView(R.id.rl_channel)
         RelativeLayout rl_channel;
@@ -232,14 +240,13 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
         @BindView(R.id.iv_delete)
         ImageView iv_delete;
 
-        public RecommendChannelViewHolder(View view) {
+        public MoreChannelViewHolder(View view) {
             super(view);
         }
 
         @Override
         public void bindView(int position, Channel channel) {
-            tv_channel_name.setText(channel.getChannelName());
-            iv_delete.setTag(null);
+            tv_channel_name.setText("+"+channel.getChannelName());
             iv_delete.setVisibility(View.GONE);
         }
 
@@ -263,13 +270,19 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
                     targetX = lastFourthView.getLeft();
                     targetY = lastFourthView.getTop() + lastFourthView.getHeight();
                 }
-                channel.setViewType(ChannelConst.TYPE_MY_CHANNEL);//改为推荐频道类型
+                channel.setViewType(ChannelConst.TYPE_MY_CHANNEL);//改为我的频道类型
                 if (onItemTouchHelperListener != null) {
                     onItemTouchHelperListener.onItemMove(currentPosition, myLastPosition + 1);
                 }
+                if(getItemCount(ChannelConst.TYPE_MORE_CHANNEL)==0){
+                    int index=getMoreTitlePosition();
+                    if(index!=RecyclerView.NO_POSITION) {
+                        remove(index);
+                    }
+                }
                 startAnimation(currentView, targetX, targetY);
             } else {
-                channel.setViewType(ChannelConst.TYPE_MY_CHANNEL);//改为推荐频道类型
+                channel.setViewType(ChannelConst.TYPE_MY_CHANNEL);//改为我的频道类型
                 if (myLastPosition == RecyclerView.NO_POSITION) {
                     myLastPosition = 0;
                 }
@@ -291,6 +304,23 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
         return RecyclerView.NO_POSITION;
     }
 
+    /**
+     * 获取更多频道Title位置
+     * @return
+     */
+    private int getMoreTitlePosition() {
+        for (int i = 0; i < getItemCount(); i++) {
+            if (getItemViewType(i) == ChannelConst.TYPE_MORE_TITLE) {
+                return i;
+            }
+        }
+        return RecyclerView.NO_POSITION;
+    }
+
+    /**
+     * 获取更多频道第一个位置
+     * @return
+     */
     private int getRecommendFirstPosition() {
         for (int i = 0; i < getItemCount(); i++) {
             if (getItemViewType(i) == ChannelConst.TYPE_MORE_CHANNEL) {

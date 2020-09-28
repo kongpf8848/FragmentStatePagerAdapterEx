@@ -20,6 +20,7 @@ import com.github.kongpf8848.extablayout.demo.R;
 import com.github.kongpf8848.extablayout.demo.adapter.ChannelAdapter;
 import com.github.kongpf8848.extablayout.demo.bean.Channel;
 import com.github.kongpf8848.extablayout.demo.channel.ChannelConst;
+import com.github.kongpf8848.extablayout.demo.channel.IChannelManage;
 import com.github.kongpf8848.extablayout.demo.touchhelper.DragItemHelperCallback;
 import com.github.kongpf8848.extablayout.demo.touchhelper.OnItemTouchHelperListener;
 
@@ -141,6 +142,14 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
         dismiss();
     }
 
+
+    @Override
+    public void onItemClick(int position) {
+        if(getActivity() instanceof IChannelManage){
+            ((IChannelManage)getActivity()).onSelectedChannel(adapter.getItem(position));
+            dismiss();
+        }
+    }
 
     @Override
     public void onItemDragStart(int postion) {
