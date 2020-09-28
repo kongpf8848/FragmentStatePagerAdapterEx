@@ -1,23 +1,37 @@
 package com.github.kongpf8848.extablayout.demo.touchhelper;
 
 
+import android.view.View;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public interface OnItemTouchViewHolder {
+import com.github.kongpf8848.extablayout.demo.base.BaseRecyclerViewAdapter;
+import com.github.kongpf8848.extablayout.demo.bean.Channel;
+
+public abstract class OnItemTouchViewHolder extends BaseRecyclerViewAdapter.BaseRecyclerViewHolder<Channel> {
+
+
+    public OnItemTouchViewHolder(@NonNull View itemView) {
+        super(itemView);
+    }
+
     /**
      * 是否可拖拽
      * @return
      */
-    boolean canDrag();
+    public abstract boolean canDrag();
+
+
     /**
      * 选中的时候触发
      * @param viewHolder
      */
-    void onItemSelected(RecyclerView.ViewHolder viewHolder);
+    public abstract void onItemSelected(RecyclerView.ViewHolder viewHolder);
 
     /**
      * 拖拽释放的时候触发
      * @param viewHolder
      */
-    void onItemClear(RecyclerView.ViewHolder viewHolder);
+    public abstract void onItemClear(RecyclerView.ViewHolder viewHolder);
 }

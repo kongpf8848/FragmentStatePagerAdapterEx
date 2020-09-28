@@ -6,6 +6,10 @@ public class BaseEntity implements Serializable {
 
     protected int viewType;
 
+    public BaseEntity(int viewType) {
+        this.viewType = viewType;
+    }
+
     public int getViewType() {
         return viewType;
     }

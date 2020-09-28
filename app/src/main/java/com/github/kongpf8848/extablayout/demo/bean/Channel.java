@@ -1,11 +1,8 @@
 package com.github.kongpf8848.extablayout.demo.bean;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.github.kongpf8848.extablayout.demo.base.BaseEntity;
-
-import java.io.Serializable;
 
 /**
  * 栏目信息
@@ -16,15 +13,12 @@ public class Channel extends BaseEntity {
     private String channelName;
     private int channelType; //0:固定 1:可动态添加删除
 
-    public Channel(String channelId, String channelName, int channelType) {
-        this(channelId,channelName,channelType,0);
-    }
 
     public Channel(String channelId, String channelName, int channelType,int viewType) {
+        super(viewType);
         this.channelId = channelId;
         this.channelName = channelName;
         this.channelType=channelType;
-        this.viewType=viewType;
     }
 
     public int getChannelType() {

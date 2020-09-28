@@ -16,5 +16,5 @@ public interface IChannelManage {
     /**
      * Channel添加,刪除,排序完成
      */
-    void onDragChannelFinish(List<Channel> selectedChannelList,List<Channel>unSelectedChannelList);
+    void onFinish(List<Channel> selectedChannelList,List<Channel>unSelectedChannelList);
 }

@@ -20,8 +20,10 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.kongpf8848.extablayout.demo.R;
+import com.github.kongpf8848.extablayout.demo.base.BaseEntity;
 import com.github.kongpf8848.extablayout.demo.base.BaseRecyclerViewAdapter;
 import com.github.kongpf8848.extablayout.demo.bean.Channel;
+import com.github.kongpf8848.extablayout.demo.channel.ChannelConst;
 import com.github.kongpf8848.extablayout.demo.touchhelper.DragItemHelperCallback;
 import com.github.kongpf8848.extablayout.demo.touchhelper.OnItemTouchHelperListener;
 import com.github.kongpf8848.extablayout.demo.touchhelper.OnItemTouchViewHolder;
@@ -34,14 +36,13 @@ import butterknife.OnClick;
 
 public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
 
-    public static final int TYPE_MY_CHANNEL = 0x02;
-    public static final int TYPE_RECOMMEND_TITLE = 0x04;
-    public static final int TYPE_RECOMMEND_CHANNEL = 0x08;
+
 
     private boolean editMode = false;
+    private OnItemTouchHelperListener onItemTouchHelperListener;
     private ItemTouchHelper mItemTouchHelper;
     private RecyclerView mRecyclerView;
-    private OnItemTouchHelperListener onItemTouchHelperListener;
+
 
     public ChannelAdapter(Context context, List<Channel> list) {
         super(context, list);
@@ -70,11 +71,11 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
         startEditMode(!this.editMode);
     }
 
-    private void startEditMode(boolean isEdit) {
+    public void startEditMode(boolean isEdit) {
         this.editMode = isEdit;
 
-        int visibleChildCount = mRecyclerView.getChildCount();
-        for (int i = 0; i < visibleChildCount; i++) {
+        int childCount = mRecyclerView.getChildCount();
+        for (int i = 0; i < childCount; i++) {
             View view = mRecyclerView.getChildAt(i);
             RecyclerView.ViewHolder viewHolder=mRecyclerView.getChildViewHolder(view);
             if(viewHolder instanceof MyChannelViewHolder){
@@ -92,25 +93,12 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
 
     @Override
     public void initViewType() {
-        addViewType(TYPE_MY_CHANNEL, R.layout.item_channel, MyChannelViewHolder.class);
-        addViewType(TYPE_RECOMMEND_TITLE, R.layout.item_channel_recommend_title, RecommendTitleViewHolder.class);
-        addViewType(TYPE_RECOMMEND_CHANNEL, R.layout.item_channel, RecommendChannelViewHolder.class);
+        addViewType(ChannelConst.TYPE_MY_CHANNEL, R.layout.item_channel, MyChannelViewHolder.class);
+        addViewType(ChannelConst.TYPE_MORE_TITLE, R.layout.item_more_title, RecommendTitleViewHolder.class);
+        addViewType(ChannelConst.TYPE_MORE_CHANNEL, R.layout.item_channel, RecommendChannelViewHolder.class);
     }
 
-
-    public static class RecommendTitleViewHolder extends BaseRecyclerViewHolder<Channel> {
-
-        public RecommendTitleViewHolder(View view) {
-            super(view);
-        }
-
-        @Override
-        public void bindView(int position, Channel channel) {
-        }
-    }
-
-
-    public class MyChannelViewHolder extends BaseRecyclerViewHolder<Channel> implements OnItemTouchViewHolder {
+    public class MyChannelViewHolder extends OnItemTouchViewHolder  {
 
         @BindView(R.id.rl_channel)
         RelativeLayout rl_channel;
@@ -121,10 +109,10 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
 
         private Channel channel;
 
+
         public MyChannelViewHolder(View view) {
             super(view);
         }
-
 
         @Override
         public void bindView(int position, Channel channel) {
@@ -142,7 +130,6 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
             } else {
                 iv_delete.setVisibility(View.GONE);
             }
-
 
             if (canDrag()) {
                 itemView.setOnLongClickListener(v -> {
@@ -170,18 +157,18 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
                             int spanCount = ((GridLayoutManager) manager).getSpanCount();
                             int targetX = targetView.getLeft();
                             int targetY = targetView.getTop();
-                            int myChannelSize = getItemCount(TYPE_MY_CHANNEL);
+                            int myChannelSize = getItemCount(ChannelConst.TYPE_MY_CHANNEL);
                             if (myChannelSize % spanCount == 1) {
                                 targetY -= targetView.getHeight();
                             }
-                            channel.setViewType(ChannelAdapter.TYPE_RECOMMEND_CHANNEL);//改为推荐频道类型
+                            channel.setViewType(ChannelConst.TYPE_MORE_CHANNEL);//改为推荐频道类型
 
                             if (onItemTouchHelperListener != null) {
                                 onItemTouchHelperListener.onItemMove(currentPosition, recommendFirstPosition - 1);
                             }
                             startAnimation(currentView, targetX, targetY);
                         } else {
-                            channel.setViewType(ChannelAdapter.TYPE_RECOMMEND_CHANNEL);
+                            channel.setViewType(ChannelConst.TYPE_MORE_CHANNEL);
                             if (recommendFirstPosition == RecyclerView.NO_POSITION) {
                                 recommendFirstPosition = getItemCount();
                             }
@@ -217,9 +204,22 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
 
         @Override
         public void onItemClear(RecyclerView.ViewHolder viewHolder) {
-            Log.d("JACK8", "onItemFinish,position:" + position);
+            Log.d("JACK8", "onItemFinish,position");
             tv_channel_name.setBackgroundColor(Color.parseColor("#f3f5f4"));
             tv_channel_name.animate().scaleXBy(-0.2f).scaleYBy(-0.2f).setDuration(200).start();
+        }
+    }
+
+
+
+    public static class RecommendTitleViewHolder extends BaseRecyclerViewHolder<Channel> {
+
+        public RecommendTitleViewHolder(View view) {
+            super(view);
+        }
+
+        @Override
+        public void bindView(int position, Channel channel) {
         }
     }
 
@@ -258,19 +258,19 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
                 int targetX = targetView.getLeft() + targetView.getWidth();
                 int targetY = targetView.getTop();
 
-                int myChannelSize = getItemCount(TYPE_MY_CHANNEL);
+                int myChannelSize = getItemCount(ChannelConst.TYPE_MY_CHANNEL);
                 if (myChannelSize % spanCount == 0) {
                     View lastFourthView = mRecyclerView.getLayoutManager().findViewByPosition(getMyLastPosition() - 3);
                     targetX = lastFourthView.getLeft();
                     targetY = lastFourthView.getTop() + lastFourthView.getHeight();
                 }
-                channel.setViewType(TYPE_MY_CHANNEL);//改为推荐频道类型
+                channel.setViewType(ChannelConst.TYPE_MY_CHANNEL);//改为推荐频道类型
                 if (onItemTouchHelperListener != null) {
                     onItemTouchHelperListener.onItemMove(currentPosition, myLastPosition + 1);
                 }
                 startAnimation(currentView, targetX, targetY);
             } else {
-                channel.setViewType(TYPE_MY_CHANNEL);//改为推荐频道类型
+                channel.setViewType(ChannelConst.TYPE_MY_CHANNEL);//改为推荐频道类型
                 if (myLastPosition == RecyclerView.NO_POSITION) {
                     myLastPosition = 0;
                 }
@@ -285,7 +285,7 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
 
     private int getMyLastPosition() {
         for (int i = getItemCount() - 1; i >= 0; i--) {
-            if (getItemViewType(i) == ChannelAdapter.TYPE_MY_CHANNEL) {
+            if (getItemViewType(i) == ChannelConst.TYPE_MY_CHANNEL) {
                 return i;
             }
         }
@@ -294,7 +294,7 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
 
     private int getRecommendFirstPosition() {
         for (int i = 0; i < getItemCount(); i++) {
-            if (getItemViewType(i) == TYPE_RECOMMEND_CHANNEL) {
+            if (getItemViewType(i) == ChannelConst.TYPE_MORE_CHANNEL) {
                 return i;
             }
         }

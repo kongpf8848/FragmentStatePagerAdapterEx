@@ -3,6 +3,7 @@ package com.github.kongpf8848.extablayout.demo.touchhelper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -56,6 +57,8 @@ public class DragItemHelperCallback extends BaseItemHelperCallback {
         }
         return false;
     }
+
+
 
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder holder, int position) {

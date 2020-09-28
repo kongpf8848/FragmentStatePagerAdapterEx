@@ -23,10 +23,10 @@ import butterknife.ButterKnife;
  * @param <T>
  */
 
-public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<BaseRecyclerViewAdapter.BaseRecyclerViewHolder> {
+public abstract class BaseRecyclerViewAdapter<T extends BaseEntity> extends RecyclerView.Adapter<BaseRecyclerViewAdapter.BaseRecyclerViewHolder> {
     protected Context context;
     protected List<T> list = new ArrayList<T>();
-    protected OnItemClickListener listener = null;
+    protected OnItemClickListener onItemClickListener = null;
     protected SparseIntArray layouts;
     protected SparseArray<Class<?>> viewholders;
 
@@ -37,11 +37,10 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
 
     public interface OnItemClickListener<T> {
         void onRecyclerViewItemClick(int position, final T t);
-        void onRecyclerViewItemLongClick(int position, final T t);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
-        this.listener = listener;
+        this.onItemClickListener = listener;
     }
 
 
@@ -114,18 +113,11 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
         if(list!=null && list.size()>0){
             final T t = list.get(position);
             holder.fill(position, t);
-            if(listener!=null){
+            if(onItemClickListener!=null){
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        listener.onRecyclerViewItemClick(position, t);
-                    }
-                });
-                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        listener.onRecyclerViewItemLongClick(position,t);
-                        return true;
+                        onItemClickListener.onRecyclerViewItemClick(position, t);
                     }
                 });
             }

@@ -143,7 +143,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     @Override
-    public void onDragChannelFinish(List<Channel> selectedChannelList, List<Channel> unSelectedChannelList) {
+    public void onFinish(List<Channel> selectedChannelList, List<Channel> unSelectedChannelList) {
         mainAdapter.notifyDataSetChanged();
     }
 
