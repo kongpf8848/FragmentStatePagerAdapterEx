@@ -120,9 +120,9 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
             tv_channel_name.setText(channel.getChannelName());
 
             if (!canDrag()) {
-                tv_channel_name.setTextColor(Color.GRAY);
+                tv_channel_name.setBackgroundResource(R.drawable.shape_bg_channel_name_no_drag);
             } else {
-                tv_channel_name.setTextColor(Color.BLACK);
+                tv_channel_name.setBackgroundResource(R.drawable.shape_bg_channel_name_can_drag);
             }
 
             if (editMode && canDrag()) {
@@ -134,7 +134,6 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
             if (canDrag()) {
                 itemView.setOnLongClickListener(v -> {
                     if (!isEditMode()) {
-                        startEditMode(true);
                         if(onItemTouchHelperListener!=null){
                             onItemTouchHelperListener.onItemDragStart(position);
                         }

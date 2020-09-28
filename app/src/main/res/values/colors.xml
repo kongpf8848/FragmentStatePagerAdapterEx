@@ -4,8 +4,11 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
 
-    <color name="white">#FFFFFFFF</color>
+    <color name="white">#ffffffff</color>
+    <color name="black">#ff000000</color>
 
-    <color name="text_color_primary">#333333</color>
-    <color name="text_color_second">#999999</color>
+    <color name="bg_channel_name">#fff3f4f5</color>
+
+    <color name="text_color_primary">#ff333333</color>
+    <color name="text_color_second">#ff999999</color>
 </resources>

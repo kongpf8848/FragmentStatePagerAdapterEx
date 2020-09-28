@@ -18,7 +18,7 @@
             android:layout_gravity="end"
             android:padding="10.0dip"
             android:scaleType="center"
-            android:src="@drawable/ic_close" />
+            android:src="@drawable/ic_dialog_close" />
 
     </androidx.appcompat.widget.Toolbar>
 

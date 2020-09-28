@@ -45,7 +45,6 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
     private ChannelAdapter adapter;
     private DragItemHelperCallback callback;
     private ItemTouchHelper itemTouchHelper;
-    private boolean isEditMode=false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -114,8 +113,8 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
     }
 
     private void toggleEditStatus() {
-        isEditMode=!isEditMode;
-        if(isEditMode){
+        adapter.toogleEditMode();
+        if(adapter.isEditMode()){
             tv_tip.setText("拖拽可以排序");
             tv_edit.setBackgroundResource(R.drawable.bg_shape_finish);
             tv_edit.setText(R.string.finish);
@@ -127,8 +126,6 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
             tv_edit.setText(R.string.edit);
             tv_edit.setTextColor(Color.parseColor("#0000EE"));
         }
-        adapter.startEditMode(isEditMode);
-
 
     }
 
@@ -147,13 +144,13 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
 
     @Override
     public void onItemDragStart(int postion) {
-
+       toggleEditStatus();
     }
 
     @Override
     public void onItemMove(int starPosition, int endPosition) {
         Log.d("JACK8", "onItemMove() called with: starPosition = [" + starPosition + "], endPosition = [" + endPosition + "]");
-         Channel channel = (Channel)allData.get(starPosition);
+         Channel channel = allData.get(starPosition);
          allData.remove(starPosition);
          allData.add(endPosition, channel);
          adapter.notifyItemMoved(starPosition, endPosition);
