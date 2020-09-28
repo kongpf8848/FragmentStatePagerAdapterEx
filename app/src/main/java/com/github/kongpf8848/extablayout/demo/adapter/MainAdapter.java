@@ -3,13 +3,14 @@ package com.github.kongpf8848.extablayout.demo.adapter;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.github.kongpf8848.extablayout.demo.bean.Channel;
 import com.github.kongpf8848.extablayout.demo.fragment.ChannelFragment;
 
 import java.util.List;
 
-public class MainAdapter extends FragmentPagerAdapter {
+public class MainAdapter extends FragmentStatePagerAdapter {
 
     private List<Channel> list;
 

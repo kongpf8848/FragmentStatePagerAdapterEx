@@ -54,6 +54,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     protected void initData() {
         super.initData();
+        mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        mTabLayout = findViewById(R.id.glue_tab_layout);
+        iv_nav_menu=findViewById(R.id.iv_nav_menu);
+        iv_nav_menu.setOnClickListener(this);
+
         initChannelData();
         initViewPager();
     }
@@ -80,10 +85,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void initViewPager() {
-        mViewPager = (ViewPager) findViewById(R.id.view_pager);
-        mTabLayout = findViewById(R.id.glue_tab_layout);
-        iv_nav_menu=findViewById(R.id.iv_nav_menu);
-        iv_nav_menu.setOnClickListener(this);
 
         mainAdapter=new MainAdapter(getSupportFragmentManager(),selectedChannelList);
         mViewPager.setAdapter(mainAdapter);
@@ -143,8 +144,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     @Override
-    public void onFinish(List<Channel> selectedChannelList, List<Channel> unSelectedChannelList) {
-        mainAdapter.notifyDataSetChanged();
+    public void onFinish(List<Channel> selected, List<Channel> unSelected) {
+        this.selectedChannelList=selected;
+        this.unSelectedChannelList=unSelected;
+        String selectedData="";
+        String unSelectedData="";
+        if(this.selectedChannelList!=null && this.selectedChannelList.size()>0){
+            selectedData=GsonUtil.fromChannelList(selectedChannelList);
+        }
+        CommonPreferenceManager.getInstance(this).setSelectedChannelData(selectedData);
+        if(this.unSelectedChannelList!=null && this.unSelectedChannelList.size()>0){
+            unSelectedData=GsonUtil.fromChannelList(unSelectedChannelList);
+        }
+        CommonPreferenceManager.getInstance(this).setUnSelectedChannelData(unSelectedData);
+        initViewPager();
     }
 
 }

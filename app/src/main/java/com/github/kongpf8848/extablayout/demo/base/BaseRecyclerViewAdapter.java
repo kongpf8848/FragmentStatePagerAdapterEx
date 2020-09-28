@@ -127,6 +127,20 @@ public abstract class BaseRecyclerViewAdapter<T extends BaseEntity> extends Recy
     public List<T> getList(){
         return list;
     }
+
+    public List<T> getList(int viewType){
+        List<T>list=getList();
+        List<T>filter=new ArrayList<>();
+        if(list!=null && list.size()>0){
+            for (int i = 0; i <list.size() ; i++) {
+                if(getItemViewType(i)==viewType){
+                    filter.add(list.get(i));
+                }
+            }
+        }
+        return filter;
+    }
+
     public void add(T t) {
         if(list!=null) {
             list.add(t);

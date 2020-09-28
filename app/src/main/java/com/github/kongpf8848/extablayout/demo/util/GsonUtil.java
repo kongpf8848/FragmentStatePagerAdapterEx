@@ -15,4 +15,9 @@ public class GsonUtil {
         return list;
     }
 
+    public static String fromChannelList(List<Channel>list){
+        String str=gson.toJson(list);
+        return str;
+    }
+
 }

@@ -42,7 +42,6 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
 
     private List<Channel> selectedChannelList = new ArrayList<>();
     private List<Channel> unselectedChannelList = new ArrayList<>();
-    private List<Channel>allData = new ArrayList<>();
     private ChannelAdapter adapter;
     private DragItemHelperCallback callback;
     private ItemTouchHelper itemTouchHelper;
@@ -70,14 +69,14 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
         selectedChannelList = (List<Channel>) getArguments().getSerializable(CommonPreferenceManager.SELECTED_CHANNEL_DATA);
         unselectedChannelList = (List<Channel>) getArguments().getSerializable(CommonPreferenceManager.UNSELECTED_CHANNEL_DATA);
 
-        allData.clear();
+        List<Channel>list=new ArrayList<>();
         if (selectedChannelList != null && selectedChannelList.size() > 0) {
-            allData.addAll(selectedChannelList);
+            list.addAll(selectedChannelList);
         }
 
         if (unselectedChannelList != null && unselectedChannelList.size() > 0) {
-            allData.add(new Channel("","",0,ChannelConst.TYPE_MORE_TITLE));
-            allData.addAll(unselectedChannelList);
+            list.add(new Channel("","",0,ChannelConst.TYPE_MORE_TITLE));
+            list.addAll(unselectedChannelList);
         }
 
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 4);
@@ -99,7 +98,7 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
         itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
-        adapter = new ChannelAdapter(getActivity(), allData);
+        adapter = new ChannelAdapter(getActivity(), list);
         adapter.setOnItemTouchHelperListener(this);
         mRecyclerView.setAdapter(adapter);
     }
@@ -132,14 +131,13 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
 
     @OnClick(R.id.iv_close)
     public void onClose() {
-//        List<Channel>selectedList=new ArrayList<>();
-//        for(Channel channel:allData){
-//            Log.d("JACK8","channel:"+channel);
-//        }
-//        if(getActivity() instanceof IChannelManage){
-//           // ((IChannelManage)getActivity()).onDragChannelFinish(List<Channel>selectedChannelList,);
-//        }
-        dismiss();
+        List<Channel>selectedList=adapter.getList(ChannelConst.TYPE_MY_CHANNEL);
+        List<Channel>unselectedList=adapter.getList(ChannelConst.TYPE_MORE_CHANNEL);
+        if(getActivity() instanceof IChannelManage){
+           ((IChannelManage)getActivity()).onFinish(selectedList,unselectedList);
+            dismiss();
+        }
+
     }
 
 
@@ -158,10 +156,11 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
 
     @Override
     public void onItemMove(int starPosition, int endPosition) {
-        Log.d("JACK8", "onItemMove() called with: starPosition = [" + starPosition + "], endPosition = [" + endPosition + "]");
-         Channel channel = allData.get(starPosition);
-         allData.remove(starPosition);
-         allData.add(endPosition, channel);
+         Log.d("JACK8", "onItemMove() called with: starPosition = [" + starPosition + "], endPosition = [" + endPosition + "]");
+         List<Channel>list=adapter.getList();
+         Channel channel = list.get(starPosition);
+         list.remove(starPosition);
+         list.add(endPosition, channel);
          adapter.notifyItemMoved(starPosition, endPosition);
     }
 
