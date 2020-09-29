@@ -3,4 +3,8 @@
 
     <string name="edit">编辑</string>
     <string name="finish">完成</string>
+    <string name="channel_more">更多频道</string>
+    <string name="channel_more_add">点击添加频道</string>
+    <string name="drag_sort">拖拽可以排序</string>
+    <string name="enter_channel">点击进入频道</string>
 </resources>

@@ -10,6 +10,7 @@ public class ChannelConst {
     public static final int TYPE_MY_CHANNEL = 0x00;
     public static final int TYPE_MORE_TITLE = 0x01;
     public static final int TYPE_MORE_CHANNEL = 0x02;
+    public static final String KEY_CURRENT_CHANNEL = "current_channel";
 
     public static List<Channel> getDefaultChannleData(){
         List<Channel>list=new ArrayList<>();

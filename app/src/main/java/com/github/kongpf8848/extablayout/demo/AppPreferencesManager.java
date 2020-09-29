@@ -20,6 +20,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+/**
+ * 配置文件管理器
+ */
 
 public class AppPreferencesManager {
     private static SharedPreferences sPreferences;
@@ -32,9 +35,14 @@ public class AppPreferencesManager {
         sPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
     }
 
-    public static final AppPreferencesManager getInstance(Context context) {
+    public static AppPreferencesManager getInstance(Context context) {
+
         if (sQDPreferenceManager == null) {
-            sQDPreferenceManager = new AppPreferencesManager(context);
+            synchronized (AppPreferencesManager.class){
+                if(sQDPreferenceManager==null){
+                    sQDPreferenceManager = new AppPreferencesManager(context);
+                }
+            }
         }
         return sQDPreferenceManager;
     }

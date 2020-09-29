@@ -34,8 +34,7 @@ import butterknife.OnClick;
 
 public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
 
-
-
+    private Channel currentChannel;
     private boolean editMode = false;
     private OnItemTouchHelperListener onItemTouchHelperListener;
     private ItemTouchHelper mItemTouchHelper;
@@ -50,6 +49,10 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
         this.onItemTouchHelperListener = onItemTouchHelperListener;
         DragItemHelperCallback callback = new DragItemHelperCallback(onItemTouchHelperListener);
         this.mItemTouchHelper = new ItemTouchHelper(callback);
+    }
+
+    public void setCurrentChannel(Channel channel){
+        this.currentChannel=channel;
     }
 
     @Override
@@ -92,7 +95,7 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
     @Override
     public void initViewType() {
         addViewType(ChannelConst.TYPE_MY_CHANNEL, R.layout.holder_item_menu, MyChannelViewHolder.class);
-        addViewType(ChannelConst.TYPE_MORE_TITLE, R.layout.item_more_title, MoreTitleViewHolder.class);
+        addViewType(ChannelConst.TYPE_MORE_TITLE, R.layout.holder_title_menu, MoreTitleViewHolder.class);
         addViewType(ChannelConst.TYPE_MORE_CHANNEL, R.layout.holder_item_menu, MoreChannelViewHolder.class);
     }
 
@@ -101,8 +104,6 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
      */
     public class MyChannelViewHolder extends OnItemTouchViewHolder  {
 
-        @BindView(R.id.rl_channel)
-        RelativeLayout rl_channel;
         @BindView(R.id.tv_channel_name)
         TextView tv_channel_name;
         @BindView(R.id.iv_delete)
@@ -125,6 +126,8 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
             } else {
                 tv_channel_name.setBackgroundResource(R.drawable.shape_bg_channel_name_can_drag);
             }
+            tv_channel_name.setTextColor(channel==currentChannel?itemView.getResources().getColor(R.color.app_blue):itemView.getResources().getColor(R.color.text_color_primary));
+
 
             if (editMode && canDrag()) {
                 iv_delete.setVisibility(View.VISIBLE);
@@ -143,7 +146,7 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
                     return true;
                 });
             }
-            rl_channel.setOnClickListener(new View.OnClickListener() {
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (isEditMode()) {
@@ -232,8 +235,6 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
      */
     public class MoreChannelViewHolder extends BaseRecyclerViewHolder<Channel> {
 
-        @BindView(R.id.rl_channel)
-        RelativeLayout rl_channel;
         @BindView(R.id.tv_channel_name)
         TextView tv_channel_name;
         @BindView(R.id.iv_delete)

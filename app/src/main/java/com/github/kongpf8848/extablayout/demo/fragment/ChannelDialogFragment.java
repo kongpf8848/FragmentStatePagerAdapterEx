@@ -23,6 +23,7 @@ import com.github.kongpf8848.extablayout.demo.channel.ChannelConst;
 import com.github.kongpf8848.extablayout.demo.channel.IChannelManage;
 import com.github.kongpf8848.extablayout.demo.touchhelper.DragItemHelperCallback;
 import com.github.kongpf8848.extablayout.demo.touchhelper.OnItemTouchHelperListener;
+import com.gyf.immersionbar.ImmersionBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,9 +46,8 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
 
     private List<Channel> selectedChannelList = new ArrayList<>();
     private List<Channel> unselectedChannelList = new ArrayList<>();
+    private Channel currentChannel;
     private ChannelAdapter adapter;
-    private DragItemHelperCallback callback;
-    private ItemTouchHelper itemTouchHelper;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,9 +69,11 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
+        ImmersionBar.with(this).statusBarColor(R.color.white).statusBarDarkFont(true).titleBar(R.id.toolbar).init();
 
         selectedChannelList = (List<Channel>) getArguments().getSerializable(AppPreferencesManager.SELECTED_CHANNEL_DATA);
         unselectedChannelList = (List<Channel>) getArguments().getSerializable(AppPreferencesManager.UNSELECTED_CHANNEL_DATA);
+        currentChannel=(Channel)getArguments().getSerializable(ChannelConst.KEY_CURRENT_CHANNEL);
 
         List<Channel>list=new ArrayList<>();
         if (selectedChannelList != null && selectedChannelList.size() > 0) {
@@ -96,13 +98,9 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
         });
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setAdapter(adapter);
-
-        callback = new DragItemHelperCallback(this);
-        itemTouchHelper = new ItemTouchHelper(callback);
-        itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
         adapter = new ChannelAdapter(getActivity(), list);
+        adapter.setCurrentChannel(currentChannel);
         adapter.setOnItemTouchHelperListener(this);
         mRecyclerView.setAdapter(adapter);
     }
@@ -119,36 +117,38 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
     private void toggleEditStatus() {
         adapter.toogleEditMode();
         if(adapter.isEditMode()){
-            tv_tip.setText("拖拽可以排序");
+            tv_tip.setText(R.string.drag_sort);
             tv_edit.setBackgroundResource(R.drawable.bg_shape_finish);
             tv_edit.setText(R.string.finish);
             tv_edit.setTextColor(Color.WHITE);
         }
         else{
-            tv_tip.setText("点击进入频道");
+            tv_tip.setText(R.string.enter_channel);
             tv_edit.setBackgroundResource(R.drawable.bg_shape_edit);
             tv_edit.setText(R.string.edit);
             tv_edit.setTextColor(Color.parseColor("#0000EE"));
+
+            List<Channel>selectedList=adapter.getList(ChannelConst.TYPE_MY_CHANNEL);
+            List<Channel>unselectedList=adapter.getList(ChannelConst.TYPE_MORE_CHANNEL);
+            if(getActivity() instanceof IChannelManage){
+                ((IChannelManage)getActivity()).onFinish(selectedList,unselectedList);
+
+            }
+
         }
 
     }
 
-    @OnClick(R.id.iv_close)
+    @OnClick(R.id.fl_close)
     public void onClose() {
-        List<Channel>selectedList=adapter.getList(ChannelConst.TYPE_MY_CHANNEL);
-        List<Channel>unselectedList=adapter.getList(ChannelConst.TYPE_MORE_CHANNEL);
-        if(getActivity() instanceof IChannelManage){
-           ((IChannelManage)getActivity()).onFinish(selectedList,unselectedList);
-            dismiss();
-        }
-
+        dismiss();
     }
 
 
     @Override
     public void onItemClick(int position) {
         if(getActivity() instanceof IChannelManage){
-            ((IChannelManage)getActivity()).onSelectedChannel(adapter.getItem(position));
+           ((IChannelManage)getActivity()).onSelectedChannel(adapter.getItem(position));
             dismiss();
         }
     }

@@ -102,6 +102,7 @@ public class MainActivity extends BaseActivity implements IChannelManage {
         Bundle bundle=new Bundle();
         bundle.putSerializable(AppPreferencesManager.SELECTED_CHANNEL_DATA, (Serializable) selectedChannelList);
         bundle.putSerializable(AppPreferencesManager.UNSELECTED_CHANNEL_DATA, (Serializable) unSelectedChannelList);
+        bundle.putSerializable(ChannelConst.KEY_CURRENT_CHANNEL,mainAdapter.getItemData(viewPager.getCurrentItem()));
         fragment.setArguments(bundle);
         fragment.show(getSupportFragmentManager(),ChannelDialogFragment.class.getSimpleName());
     }
@@ -118,7 +119,7 @@ public class MainActivity extends BaseActivity implements IChannelManage {
         int oldIndex= viewPager.getCurrentItem();
         int newIndex=-1;
         for (int i = 0; i <mainAdapter.getCount() ; i++) {
-            if(mainAdapter.getItemData(i).getChannelId().equals(channel.getChannelId())){
+            if(mainAdapter.dataEquals(mainAdapter.getItemData(i),channel)){
                 newIndex=i;
                 break;
             }
