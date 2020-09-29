@@ -13,12 +13,12 @@
 
         <ImageView
             android:id="@+id/iv_close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:layout_gravity="end"
             android:padding="10.0dip"
             android:scaleType="center"
-            android:src="@drawable/ic_dialog_close" />
+            android:src="@drawable/ic_nav_close" />
 
     </androidx.appcompat.widget.Toolbar>
 

@@ -39,15 +39,15 @@
                 android:id="@+id/menu_channel"
                 android:layout_width="44dp"
                 android:layout_height="match_parent"
-                android:layout_gravity="end">
+                android:layout_gravity="end|center">
 
                 <ImageView
                     android:id="@+id/iv_nav_menu"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:layout_gravity="center"
+                    android:layout_gravity="end|center"
                     android:src="@drawable/ic_nav_menu"
-                    android:contentDescription="@string/app_name"
+                    android:layout_marginRight="10dp"
                     />
 
             </FrameLayout>

@@ -63,7 +63,7 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
         if (dialog != null) {
             dialog.getWindow().setWindowAnimations(R.style.DialogAnim);
         }
-        return inflater.inflate(R.layout.dialog_channel, container, false);
+        return inflater.inflate(R.layout.dialog_menu, container, false);
     }
 
     @Override

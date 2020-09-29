@@ -2,7 +2,6 @@ package com.github.kongpf8848.extablayout.demo.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
@@ -92,9 +91,9 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
 
     @Override
     public void initViewType() {
-        addViewType(ChannelConst.TYPE_MY_CHANNEL, R.layout.item_channel, MyChannelViewHolder.class);
+        addViewType(ChannelConst.TYPE_MY_CHANNEL, R.layout.holder_item_menu, MyChannelViewHolder.class);
         addViewType(ChannelConst.TYPE_MORE_TITLE, R.layout.item_more_title, MoreTitleViewHolder.class);
-        addViewType(ChannelConst.TYPE_MORE_CHANNEL, R.layout.item_channel, MoreChannelViewHolder.class);
+        addViewType(ChannelConst.TYPE_MORE_CHANNEL, R.layout.holder_item_menu, MoreChannelViewHolder.class);
     }
 
     /**
