@@ -6,7 +6,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.List;
 
-public class GsonUtil {
+public class GsonUtils {
 
     private static Gson gson=new Gson();
 

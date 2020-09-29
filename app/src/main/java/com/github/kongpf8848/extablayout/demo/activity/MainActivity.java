@@ -14,27 +14,29 @@ import com.github.kongpf8848.extablayout.demo.bean.Channel;
 import com.github.kongpf8848.extablayout.demo.channel.ChannelConst;
 import com.github.kongpf8848.extablayout.demo.channel.IChannelManage;
 import com.github.kongpf8848.extablayout.demo.fragment.ChannelDialogFragment;
-import com.github.kongpf8848.extablayout.demo.util.GsonUtil;
+import com.github.kongpf8848.extablayout.demo.util.GsonUtils;
 import com.gyf.immersionbar.ImmersionBar;
 
 import androidx.viewpager.widget.ViewPager;
 
 import android.text.TextUtils;
 import android.view.Menu;
-import android.view.View;
-import android.widget.ImageView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener, IChannelManage {
+import butterknife.BindView;
+import butterknife.OnClick;
+
+public class MainActivity extends BaseActivity implements IChannelManage {
 
     private static final String TAG = "MainActivity";
 
-    private ExTabLayout tabLayout;
-    private ViewPager viewPager;
-    private ImageView iv_nav_menu;
+    @BindView(R.id.tab_layout)
+    ExTabLayout tabLayout;
+    @BindView(R.id.view_pager)
+    ViewPager viewPager;
 
     private List<Channel> selectedChannelList = new ArrayList<>();
     private List<Channel> unSelectedChannelList = new ArrayList<>();
@@ -49,21 +51,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void onContentChanged() {
         super.onContentChanged();
-        ImmersionBar.with(this).statusBarColor(R.color.white).statusBarDarkFont(true).titleBar(R.id.fl_titlebar).init();
+        ImmersionBar.with(this).statusBarColor(R.color.white).statusBarDarkFont(true).titleBar(R.id.toolbar).init();
     }
 
     @Override
     protected void initData() {
         super.initData();
-        viewPager = (ViewPager) findViewById(R.id.view_pager);
-        tabLayout = findViewById(R.id.tab_layout);
-        iv_nav_menu=findViewById(R.id.iv_nav_menu);
-        iv_nav_menu.setOnClickListener(this);
 
         initChannelData();
         initViewPager();
     }
 
+    /**
+     * 初始化频道数据
+     */
     private void initChannelData() {
         String selectedChannelData= CommonPreferenceManager.getInstance(this).getSelectedChannelData();
         String unselectedChannelData= CommonPreferenceManager.getInstance(this).getUnSelectedChannelData();
@@ -71,61 +72,49 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             selectedChannelList= ChannelConst.getDefaultChannleData();
         }
         else{
-            selectedChannelList= GsonUtil.toChannelList(selectedChannelData);
+            selectedChannelList= GsonUtils.toChannelList(selectedChannelData);
         }
 
         if (TextUtils.isEmpty(unselectedChannelData)) {
             unSelectedChannelList.clear();
         }
         else{
-            unSelectedChannelList= GsonUtil.toChannelList(unselectedChannelData);
+            unSelectedChannelList= GsonUtils.toChannelList(unselectedChannelData);
         }
 
     }
 
+    /**
+     * 初始化ViewPager
+     */
     private void initViewPager() {
 
+        tabLayout.setSlidingIndicatorAnimType(ExTabLayout.AnimType.HALF_GLUE);
+        tabLayout.setClickIndicatorAnimType(ExTabLayout.AnimType.NONE);
         mainAdapter=new MainAdapter(getSupportFragmentManager(),selectedChannelList);
         viewPager.setAdapter(mainAdapter);
-
-        tabLayout.setTabMode(ExTabLayout.MODE_SCROLLABLE);
-        tabLayout.setSelectedTabIndicatorHeight(dp2px(2));
-        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#239cfa"));
-        GradientDrawable gradientDrawable = new GradientDrawable();
-        gradientDrawable.setCornerRadius(dp2px(2));
-        tabLayout.setSelectedTabIndicator(gradientDrawable);
-        tabLayout.setTabIndicatorFullWidth(false);
-        tabLayout.setUnboundedRipple(false);
-        tabLayout.setTabRippleColor(ColorStateList.valueOf(Color.TRANSPARENT));
-        tabLayout.setSlidingIndicatorAnimType(ExTabLayout.AnimType.HALF_GLUE);
         tabLayout.setupWithViewPager(viewPager);
     }
+
+    /**
+     * 频道管理
+     */
+    @OnClick({R.id.menu_channel,R.id.iv_nav_menu})
+    public void onClickChannelMenu(){
+        ChannelDialogFragment fragment=new ChannelDialogFragment();
+        Bundle bundle=new Bundle();
+        bundle.putSerializable(CommonPreferenceManager.SELECTED_CHANNEL_DATA, (Serializable) selectedChannelList);
+        bundle.putSerializable(CommonPreferenceManager.UNSELECTED_CHANNEL_DATA, (Serializable) unSelectedChannelList);
+        fragment.setArguments(bundle);
+        fragment.show(getSupportFragmentManager(),ChannelDialogFragment.class.getSimpleName());
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_bar, menu);
         return true;
     }
-
-
-    private int dp2px(float dp) {
-        float density = this.getResources().getDisplayMetrics().density;
-        return (int) (dp * density + 0.5f);
-    }
-
-    @Override
-    public void onClick(View v) {
-        int id = v.getId();
-        if(id==R.id.iv_nav_menu){
-            ChannelDialogFragment fragment=new ChannelDialogFragment();
-            Bundle bundle=new Bundle();
-            bundle.putSerializable(CommonPreferenceManager.SELECTED_CHANNEL_DATA, (Serializable) selectedChannelList);
-            bundle.putSerializable(CommonPreferenceManager.UNSELECTED_CHANNEL_DATA, (Serializable) unSelectedChannelList);
-            fragment.setArguments(bundle);
-            fragment.show(getSupportFragmentManager(),ChannelDialogFragment.class.getSimpleName());
-        }
-    }
-
 
     @Override
     public void onSelectedChannel(Channel channel) {
@@ -150,15 +139,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         String selectedData="";
         String unSelectedData="";
         if(this.selectedChannelList!=null && this.selectedChannelList.size()>0){
-            selectedData=GsonUtil.fromChannelList(selectedChannelList);
+            selectedData= GsonUtils.fromChannelList(selectedChannelList);
         }
         CommonPreferenceManager.getInstance(this).setSelectedChannelData(selectedData);
         if(this.unSelectedChannelList!=null && this.unSelectedChannelList.size()>0){
-            unSelectedData=GsonUtil.fromChannelList(unSelectedChannelList);
+            unSelectedData= GsonUtils.fromChannelList(unSelectedChannelList);
         }
         CommonPreferenceManager.getInstance(this).setUnSelectedChannelData(unSelectedData);
         mainAdapter.notifyDataSetChanged();
-       // initViewPager();
     }
 
 }

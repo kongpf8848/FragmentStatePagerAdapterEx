@@ -6,8 +6,10 @@
 
     <color name="white">#ffffffff</color>
     <color name="black">#ff000000</color>
+    <color name="transparent">#00000000</color>
 
     <color name="bg_channel_name">#fff3f4f5</color>
+    <color name="app_background">#fff7f7f7</color>
     <color name="app_blue">#ff239cfa</color>
 
     <color name="text_color_primary">#ff333333</color>

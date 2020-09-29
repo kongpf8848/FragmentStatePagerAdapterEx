@@ -3,44 +3,55 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/app_background"
+    >
 
     <FrameLayout
         android:id="@+id/fl_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/fl_titlebar"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
-
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/white"
+            app:contentInsetStart="0dp"
+            >
 
             <com.github.kongpf8848.extablayout.ExTabLayout
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="44dp"
+                app:tabMode="scrollable"
                 app:tabGravity="center"
                 app:tabIndicatorFullWidth="false"
-                app:tabMode="scrollable"
-                app:tabTextAppearance="@style/TabTextAppearance" />
+                app:tabIndicatorHeight="2dp"
+                app:tabRippleColor="@color/transparent"
+                app:tabTextAppearance="@style/TabTextAppearance"
+                app:tabIndicatorColor="@color/app_blue"
+                app:tabUnboundedRipple="false"
+                />
 
             <FrameLayout
                 android:id="@+id/menu_channel"
                 android:layout_width="44dp"
                 android:layout_height="match_parent"
-                android:layout_gravity="right">
+                android:layout_gravity="end">
 
                 <ImageView
                     android:id="@+id/iv_nav_menu"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_nav_menu" />
+                    android:src="@drawable/ic_nav_menu"
+                    android:contentDescription="@string/app_name"
+                    />
 
             </FrameLayout>
-        </FrameLayout>
+        </androidx.appcompat.widget.Toolbar>
 
 
         <androidx.viewpager.widget.ViewPager
