@@ -5,8 +5,6 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
-
 import com.github.kongpf8848.extablayout.ExTabLayout;
 import com.github.kongpf8848.extablayout.demo.CommonPreferenceManager;
 import com.github.kongpf8848.extablayout.demo.R;
@@ -16,11 +14,9 @@ import com.github.kongpf8848.extablayout.demo.bean.Channel;
 import com.github.kongpf8848.extablayout.demo.channel.ChannelConst;
 import com.github.kongpf8848.extablayout.demo.channel.IChannelManage;
 import com.github.kongpf8848.extablayout.demo.fragment.ChannelDialogFragment;
-import com.github.kongpf8848.extablayout.demo.fragment.ChannelFragment;
 import com.github.kongpf8848.extablayout.demo.util.GsonUtil;
+import com.gyf.immersionbar.ImmersionBar;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.text.TextUtils;
@@ -36,8 +32,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     private static final String TAG = "MainActivity";
 
-    private ExTabLayout mTabLayout;
-    private ViewPager mViewPager;
+    private ExTabLayout tabLayout;
+    private ViewPager viewPager;
     private ImageView iv_nav_menu;
 
     private List<Channel> selectedChannelList = new ArrayList<>();
@@ -50,12 +46,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         return R.layout.activity_main;
     }
 
+    @Override
+    public void onContentChanged() {
+        super.onContentChanged();
+        ImmersionBar.with(this).statusBarColor(R.color.white).statusBarDarkFont(true).titleBar(R.id.fl_titlebar).init();
+    }
 
     @Override
     protected void initData() {
         super.initData();
-        mViewPager = (ViewPager) findViewById(R.id.view_pager);
-        mTabLayout = findViewById(R.id.glue_tab_layout);
+        viewPager = (ViewPager) findViewById(R.id.view_pager);
+        tabLayout = findViewById(R.id.tab_layout);
         iv_nav_menu=findViewById(R.id.iv_nav_menu);
         iv_nav_menu.setOnClickListener(this);
 
@@ -66,7 +67,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private void initChannelData() {
         String selectedChannelData= CommonPreferenceManager.getInstance(this).getSelectedChannelData();
         String unselectedChannelData= CommonPreferenceManager.getInstance(this).getUnSelectedChannelData();
-
         if (TextUtils.isEmpty(selectedChannelData)) {
             selectedChannelList= ChannelConst.getDefaultChannleData();
         }
@@ -81,25 +81,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             unSelectedChannelList= GsonUtil.toChannelList(unselectedChannelData);
         }
 
-
     }
 
     private void initViewPager() {
 
         mainAdapter=new MainAdapter(getSupportFragmentManager(),selectedChannelList);
-        mViewPager.setAdapter(mainAdapter);
+        viewPager.setAdapter(mainAdapter);
 
-        mTabLayout.setTabMode(ExTabLayout.MODE_SCROLLABLE);
-        mTabLayout.setSelectedTabIndicatorHeight(dp2px(2));
-        mTabLayout.setSelectedTabIndicatorColor(Color.parseColor("#239cfa"));
+        tabLayout.setTabMode(ExTabLayout.MODE_SCROLLABLE);
+        tabLayout.setSelectedTabIndicatorHeight(dp2px(2));
+        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#239cfa"));
         GradientDrawable gradientDrawable = new GradientDrawable();
         gradientDrawable.setCornerRadius(dp2px(2));
-        mTabLayout.setSelectedTabIndicator(gradientDrawable);
-        mTabLayout.setTabIndicatorFullWidth(false);
-        mTabLayout.setUnboundedRipple(false);
-        mTabLayout.setTabRippleColor(ColorStateList.valueOf(Color.TRANSPARENT));
-        mTabLayout.setSlidingIndicatorAnimType(ExTabLayout.AnimType.HALF_GLUE);
-        mTabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setSelectedTabIndicator(gradientDrawable);
+        tabLayout.setTabIndicatorFullWidth(false);
+        tabLayout.setUnboundedRipple(false);
+        tabLayout.setTabRippleColor(ColorStateList.valueOf(Color.TRANSPARENT));
+        tabLayout.setSlidingIndicatorAnimType(ExTabLayout.AnimType.HALF_GLUE);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
@@ -130,7 +129,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void onSelectedChannel(Channel channel) {
-        int oldIndex=mViewPager.getCurrentItem();
+        int oldIndex= viewPager.getCurrentItem();
         int newIndex=-1;
         for (int i = 0; i <mainAdapter.getCount() ; i++) {
             if(mainAdapter.getItemData(i).getChannelId().equals(channel.getChannelId())){
@@ -139,7 +138,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             }
         }
         if(newIndex>=0 && oldIndex!=newIndex){
-            mViewPager.setCurrentItem(newIndex);
+            viewPager.setCurrentItem(newIndex);
         }
     }
 

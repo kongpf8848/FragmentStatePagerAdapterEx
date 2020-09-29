@@ -23,6 +23,7 @@ import com.github.kongpf8848.extablayout.demo.channel.ChannelConst;
 import com.github.kongpf8848.extablayout.demo.channel.IChannelManage;
 import com.github.kongpf8848.extablayout.demo.touchhelper.DragItemHelperCallback;
 import com.github.kongpf8848.extablayout.demo.touchhelper.OnItemTouchHelperListener;
+import com.gyf.immersionbar.ImmersionBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * 频道管理页面
+ */
 public class ChannelDialogFragment extends DialogFragment implements OnItemTouchHelperListener {
 
     @BindView(R.id.recyclerView)
@@ -50,6 +54,7 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Black_NoTitleBar);
+
     }
 
     @Nullable

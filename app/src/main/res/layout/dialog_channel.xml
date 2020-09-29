@@ -67,7 +67,7 @@
             android:paddingBottom="3dp"
             android:text="编辑"
             android:textSize="12sp"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/app_blue"
 
             />
 
