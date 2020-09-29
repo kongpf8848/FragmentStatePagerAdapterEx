@@ -61,9 +61,13 @@ public class Channel extends BaseEntity {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if(! (obj instanceof Channel)){
-            return false;
+        if(this==obj){
+            return true;
         }
-        return this.channelId.equals(((Channel) obj).channelId);
+        else if(obj!=null && this.getClass()==obj.getClass()){
+            Channel other=(Channel) obj;
+            return this.channelId.equals(other.channelId);
+        }
+        return false;
     }
 }

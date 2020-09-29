@@ -1,6 +1,5 @@
 package com.github.kongpf8848.extablayout.demo.channel;
 
-//import com.github.kongpf8848.extablayout.demo.adapter.ChannelConst;
 import com.github.kongpf8848.extablayout.demo.bean.Channel;
 
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ public class ChannelConst {
         list.add(new Channel("03", "热榜", 1, ChannelConst.TYPE_MY_CHANNEL));
         list.add(new Channel("04", "快讯", 1, ChannelConst.TYPE_MY_CHANNEL));
 
-        list.add(new Channel("05", "Markets", 1, ChannelConst.TYPE_MY_CHANNEL));
+        list.add(new Channel("05", "", 1, ChannelConst.TYPE_MY_CHANNEL));
         list.add(new Channel("06", "浙江", 1, ChannelConst.TYPE_MY_CHANNEL));
         list.add(new Channel("07", "直播", 1, ChannelConst.TYPE_MY_CHANNEL));
         list.add(new Channel("08", "举报", 1, ChannelConst.TYPE_MY_CHANNEL));

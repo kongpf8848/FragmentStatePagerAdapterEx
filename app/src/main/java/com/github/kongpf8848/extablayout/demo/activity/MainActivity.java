@@ -145,7 +145,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void onFinish(List<Channel> selected, List<Channel> unSelected) {
-        this.selectedChannelList=selected;
+        this.selectedChannelList.clear();
+        this.selectedChannelList.addAll(selected);
         this.unSelectedChannelList=unSelected;
         String selectedData="";
         String unSelectedData="";
@@ -157,7 +158,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             unSelectedData=GsonUtil.fromChannelList(unSelectedChannelList);
         }
         CommonPreferenceManager.getInstance(this).setUnSelectedChannelData(unSelectedData);
-        initViewPager();
+        mainAdapter.notifyDataSetChanged();
+       // initViewPager();
     }
 
 }

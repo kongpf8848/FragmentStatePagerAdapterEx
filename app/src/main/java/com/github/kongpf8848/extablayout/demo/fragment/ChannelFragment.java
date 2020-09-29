@@ -8,10 +8,12 @@ import android.widget.TextView;
 
 import com.github.kongpf8848.extablayout.demo.R;
 import com.github.kongpf8848.extablayout.demo.base.BaseFragment;
+import com.github.kongpf8848.extablayout.demo.base.BaseLazyFragment;
 import com.github.kongpf8848.extablayout.demo.bean.Channel;
+import com.github.kongpf8848.extablayout.demo.util.DateUtils;
 
 
-public class ChannelFragment extends BaseFragment {
+public class ChannelFragment extends BaseLazyFragment {
 
     private Channel channel;
 
@@ -35,6 +37,11 @@ public class ChannelFragment extends BaseFragment {
     }
 
     @Override
+    public int getLayoutId() {
+        return R.layout.fragment_channel;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -43,11 +50,9 @@ public class ChannelFragment extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_channel, container, false);
-        TextView tv = view.findViewById(R.id.tv_title);
-        tv.setText(channel.getChannelName());
-        return view;
+    protected void onFragmentFirstVisible() {
+        super.onFragmentFirstVisible();
+        TextView tv = findViewById(R.id.tv_title);
+        tv.setText(channel.getChannelName()+"-"+ DateUtils.getCurrentDateTime());
     }
-
 }
