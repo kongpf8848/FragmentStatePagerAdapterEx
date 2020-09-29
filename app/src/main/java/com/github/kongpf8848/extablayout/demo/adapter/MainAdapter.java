@@ -2,12 +2,10 @@ package com.github.kongpf8848.extablayout.demo.adapter;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.github.kongpf8848.extablayout.demo.base.FragmentStatePagerAdapterEx;
 import com.github.kongpf8848.extablayout.demo.bean.Channel;
 import com.github.kongpf8848.extablayout.demo.fragment.ChannelFragment;
+import com.github.kongpf8848.pageadapter.FragmentStatePagerAdapterEx;
 
 import java.util.List;
 

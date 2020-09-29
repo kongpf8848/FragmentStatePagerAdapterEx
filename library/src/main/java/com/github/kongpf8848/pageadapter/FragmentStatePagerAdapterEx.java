@@ -1,4 +1,4 @@
-package com.github.kongpf8848.extablayout.demo.base;
+package com.github.kongpf8848.pageadapter;
 
 import android.os.Bundle;
 import android.os.Parcelable;
