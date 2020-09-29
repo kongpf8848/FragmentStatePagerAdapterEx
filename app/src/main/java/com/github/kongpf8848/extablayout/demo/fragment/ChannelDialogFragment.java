@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.kongpf8848.extablayout.demo.CommonPreferenceManager;
+import com.github.kongpf8848.extablayout.demo.AppPreferencesManager;
 import com.github.kongpf8848.extablayout.demo.R;
 import com.github.kongpf8848.extablayout.demo.adapter.ChannelAdapter;
 import com.github.kongpf8848.extablayout.demo.bean.Channel;
@@ -23,7 +23,6 @@ import com.github.kongpf8848.extablayout.demo.channel.ChannelConst;
 import com.github.kongpf8848.extablayout.demo.channel.IChannelManage;
 import com.github.kongpf8848.extablayout.demo.touchhelper.DragItemHelperCallback;
 import com.github.kongpf8848.extablayout.demo.touchhelper.OnItemTouchHelperListener;
-import com.gyf.immersionbar.ImmersionBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,8 +70,8 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
 
-        selectedChannelList = (List<Channel>) getArguments().getSerializable(CommonPreferenceManager.SELECTED_CHANNEL_DATA);
-        unselectedChannelList = (List<Channel>) getArguments().getSerializable(CommonPreferenceManager.UNSELECTED_CHANNEL_DATA);
+        selectedChannelList = (List<Channel>) getArguments().getSerializable(AppPreferencesManager.SELECTED_CHANNEL_DATA);
+        unselectedChannelList = (List<Channel>) getArguments().getSerializable(AppPreferencesManager.UNSELECTED_CHANNEL_DATA);
 
         List<Channel>list=new ArrayList<>();
         if (selectedChannelList != null && selectedChannelList.size() > 0) {

@@ -11,7 +11,6 @@ public class MyApplication extends Application {
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             e.printStackTrace();
             Log.e("Crash","error:"+e.getMessage());
-
         });
     }
 }

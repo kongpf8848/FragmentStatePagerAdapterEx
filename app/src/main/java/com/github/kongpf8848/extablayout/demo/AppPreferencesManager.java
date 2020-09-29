@@ -21,20 +21,20 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 
-public class CommonPreferenceManager {
+public class AppPreferencesManager {
     private static SharedPreferences sPreferences;
-    private static CommonPreferenceManager sQDPreferenceManager = null;
+    private static AppPreferencesManager sQDPreferenceManager = null;
 
     public static final String SELECTED_CHANNEL_DATA = "selected_channel_data";
     public static final String UNSELECTED_CHANNEL_DATA = "unselected_channel_data";
 
-    private CommonPreferenceManager(Context context) {
+    private AppPreferencesManager(Context context) {
         sPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
     }
 
-    public static final CommonPreferenceManager getInstance(Context context) {
+    public static final AppPreferencesManager getInstance(Context context) {
         if (sQDPreferenceManager == null) {
-            sQDPreferenceManager = new CommonPreferenceManager(context);
+            sQDPreferenceManager = new AppPreferencesManager(context);
         }
         return sQDPreferenceManager;
     }

@@ -1,12 +1,9 @@
 package com.github.kongpf8848.extablayout.demo.activity;
 
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 
 import com.github.kongpf8848.extablayout.ExTabLayout;
-import com.github.kongpf8848.extablayout.demo.CommonPreferenceManager;
+import com.github.kongpf8848.extablayout.demo.AppPreferencesManager;
 import com.github.kongpf8848.extablayout.demo.R;
 import com.github.kongpf8848.extablayout.demo.adapter.MainAdapter;
 import com.github.kongpf8848.extablayout.demo.base.BaseActivity;
@@ -66,8 +63,8 @@ public class MainActivity extends BaseActivity implements IChannelManage {
      * 初始化频道数据
      */
     private void initChannelData() {
-        String selectedChannelData= CommonPreferenceManager.getInstance(this).getSelectedChannelData();
-        String unselectedChannelData= CommonPreferenceManager.getInstance(this).getUnSelectedChannelData();
+        String selectedChannelData= AppPreferencesManager.getInstance(this).getSelectedChannelData();
+        String unselectedChannelData= AppPreferencesManager.getInstance(this).getUnSelectedChannelData();
         if (TextUtils.isEmpty(selectedChannelData)) {
             selectedChannelList= ChannelConst.getDefaultChannleData();
         }
@@ -103,8 +100,8 @@ public class MainActivity extends BaseActivity implements IChannelManage {
     public void onClickChannelMenu(){
         ChannelDialogFragment fragment=new ChannelDialogFragment();
         Bundle bundle=new Bundle();
-        bundle.putSerializable(CommonPreferenceManager.SELECTED_CHANNEL_DATA, (Serializable) selectedChannelList);
-        bundle.putSerializable(CommonPreferenceManager.UNSELECTED_CHANNEL_DATA, (Serializable) unSelectedChannelList);
+        bundle.putSerializable(AppPreferencesManager.SELECTED_CHANNEL_DATA, (Serializable) selectedChannelList);
+        bundle.putSerializable(AppPreferencesManager.UNSELECTED_CHANNEL_DATA, (Serializable) unSelectedChannelList);
         fragment.setArguments(bundle);
         fragment.show(getSupportFragmentManager(),ChannelDialogFragment.class.getSimpleName());
     }
@@ -141,11 +138,11 @@ public class MainActivity extends BaseActivity implements IChannelManage {
         if(this.selectedChannelList!=null && this.selectedChannelList.size()>0){
             selectedData= GsonUtils.fromChannelList(selectedChannelList);
         }
-        CommonPreferenceManager.getInstance(this).setSelectedChannelData(selectedData);
+        AppPreferencesManager.getInstance(this).setSelectedChannelData(selectedData);
         if(this.unSelectedChannelList!=null && this.unSelectedChannelList.size()>0){
             unSelectedData= GsonUtils.fromChannelList(unSelectedChannelList);
         }
-        CommonPreferenceManager.getInstance(this).setUnSelectedChannelData(unSelectedData);
+        AppPreferencesManager.getInstance(this).setUnSelectedChannelData(unSelectedData);
         mainAdapter.notifyDataSetChanged();
     }
 
