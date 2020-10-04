@@ -97,7 +97,7 @@ public class MainActivity extends BaseActivity implements IChannelManage {
      * 频道管理
      */
     @OnClick({R.id.menu_channel,R.id.iv_nav_menu})
-    public void onClickChannelMenu(){
+    public void onClickMenu(){
         ChannelDialogFragment fragment=new ChannelDialogFragment();
         Bundle bundle=new Bundle();
         bundle.putSerializable(AppPreferencesManager.SELECTED_CHANNEL_DATA, (Serializable) selectedChannelList);

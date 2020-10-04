@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,7 +52,6 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Black_NoTitleBar);
-
     }
 
     @Nullable
@@ -71,25 +71,32 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
 
         selectedChannelList = (List<Channel>) getArguments().getSerializable(AppPreferencesManager.SELECTED_CHANNEL_DATA);
         unselectedChannelList = (List<Channel>) getArguments().getSerializable(AppPreferencesManager.UNSELECTED_CHANNEL_DATA);
-        currentChannel=(Channel)getArguments().getSerializable(ChannelConst.KEY_CURRENT_CHANNEL);
+        currentChannel = (Channel) getArguments().getSerializable(ChannelConst.KEY_CURRENT_CHANNEL);
 
-        List<Channel>list=new ArrayList<>();
+        List<Channel> list = new ArrayList<>();
         if (selectedChannelList != null && selectedChannelList.size() > 0) {
-            list.addAll(selectedChannelList);
+            for(Channel channel:selectedChannelList){
+                channel.setViewType(ChannelConst.TYPE_MY_CHANNEL);
+                list.add(channel);
+            }
         }
 
         if (unselectedChannelList != null && unselectedChannelList.size() > 0) {
-            list.add(new Channel("","",0,ChannelConst.TYPE_MORE_TITLE));
-            list.addAll(unselectedChannelList);
+            list.add(ChannelConst.getMoreChannelBean());
+            for(Channel channel:unselectedChannelList){
+                channel.setViewType(ChannelConst.TYPE_MORE_CHANNEL);
+                list.add(channel);
+            }
+
         }
 
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 4);
         layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                int viewType=adapter.getItemViewType(position);
-                if (viewType==ChannelConst.TYPE_MORE_TITLE) {
-                    return 4;
+                int viewType = adapter.getItemViewType(position);
+                if (viewType == ChannelConst.TYPE_MORE_TITLE) {
+                    return ChannelConst.CHANNEL_SPAN_COUNT;
                 }
                 return 1;
             }
@@ -109,27 +116,33 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
      */
     @OnClick(R.id.tv_edit)
     public void onClickEdit() {
-       toggleEditStatus();
+        toggleEdit();
     }
 
-    private void toggleEditStatus() {
+    private void toggleEdit() {
         adapter.toogleEditMode();
-        if(adapter.isEditMode()){
+        if (adapter.isEditMode()) {
             tv_tip.setText(R.string.drag_sort);
             tv_edit.setBackgroundResource(R.drawable.bg_shape_finish);
             tv_edit.setText(R.string.finish);
             tv_edit.setTextColor(Color.WHITE);
-        }
-        else{
+        } else {
             tv_tip.setText(R.string.enter_channel);
             tv_edit.setBackgroundResource(R.drawable.bg_shape_edit);
             tv_edit.setText(R.string.edit);
-            tv_edit.setTextColor(Color.parseColor("#0000EE"));
-
+            tv_edit.setTextColor(ContextCompat.getColor(getContext(), R.color.app_blue));
+            if (getActivity() instanceof IChannelManage) {
+                List<Channel> selectedList = adapter.getList(ChannelConst.TYPE_MY_CHANNEL);
+                List<Channel> unselectedList = adapter.getList(ChannelConst.TYPE_MORE_CHANNEL);
+                ((IChannelManage) getActivity()).onFinish(selectedList, unselectedList);
+            }
         }
 
     }
 
+    /**
+     * 关闭
+     */
     @OnClick(R.id.fl_close)
     public void onClose() {
         dismiss();
@@ -138,30 +151,35 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
 
     @Override
     public void onItemClick(int position) {
-        if(getActivity() instanceof IChannelManage){
-           ((IChannelManage)getActivity()).onSelectedChannel(adapter.getItem(position));
+        if (getActivity() instanceof IChannelManage) {
+            ((IChannelManage) getActivity()).onSelectedChannel(adapter.getItem(position));
             dismiss();
         }
     }
 
     @Override
     public void onItemDragStart(int postion) {
-       toggleEditStatus();
+        toggleEdit();
     }
 
     @Override
     public void onItemMove(int starPosition, int endPosition) {
-         Log.d("JACK8", "onItemMove() called with: starPosition = [" + starPosition + "], endPosition = [" + endPosition + "]");
-         List<Channel>list=adapter.getList();
-         Channel channel = list.get(starPosition);
-         list.remove(starPosition);
-         list.add(endPosition, channel);
-         adapter.notifyItemMoved(starPosition, endPosition);
-        List<Channel>selectedList=adapter.getList(ChannelConst.TYPE_MY_CHANNEL);
-        List<Channel>unselectedList=adapter.getList(ChannelConst.TYPE_MORE_CHANNEL);
-        if(getActivity() instanceof IChannelManage){
-            ((IChannelManage)getActivity()).onFinish(selectedList,unselectedList);
+        Log.d("JACK8", "onItemMove() called with: starPosition = [" + starPosition + "], endPosition = [" + endPosition + "]");
+        List<Channel> list = adapter.getList();
+        Channel channel = list.get(starPosition);
+        list.remove(starPosition);
+        list.add(endPosition, channel);
+        adapter.notifyItemMoved(starPosition, endPosition);
 
+        /**
+         * 当从更多频道向我的频道添加时，如果此时为非编辑状态，则通知数据改变
+         */
+        if (!adapter.isEditMode()) {
+            if (getActivity() instanceof IChannelManage) {
+                List<Channel> selectedList = adapter.getList(ChannelConst.TYPE_MY_CHANNEL);
+                List<Channel> unselectedList = adapter.getList(ChannelConst.TYPE_MORE_CHANNEL);
+                ((IChannelManage) getActivity()).onFinish(selectedList, unselectedList);
+            }
         }
     }
 
