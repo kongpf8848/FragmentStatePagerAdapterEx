@@ -5,11 +5,13 @@
     android:layout_marginTop="24dp"
     >
 
-
+        <include layout="@layout/divider_line" />
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/view"
+            android:layout_marginTop="18.0dip"
             android:layout_marginBottom="4.0dip"
             android:textColor="@color/text_color_primary"
             android:textSize="18sp"

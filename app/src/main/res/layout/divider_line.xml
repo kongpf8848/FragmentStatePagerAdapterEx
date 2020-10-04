@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<View
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/view"
+    android:background="#999999"
+    android:layout_width="fill_parent"
+    android:layout_height="0.5dp"
+    android:layout_below="@id/view"
+/>

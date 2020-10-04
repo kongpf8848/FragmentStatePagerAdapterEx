@@ -200,17 +200,17 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
         @Override
         public void onItemSelected(RecyclerView.ViewHolder viewHolder) {
             Log.d("JACK8", "onItemSelected,position:" + viewHolder.getAdapterPosition());
-            //tv_channel_name.setBackgroundColor(Color.RED);
-            //tv_channel_name.animate().scaleXBy(0.2f).scaleYBy(0.2f).setDuration(200).start();
             Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
             if (vibrator != null) {
                 vibrator.vibrate(100);
             }
+            //tv_channel_name.setBackgroundColor(Color.RED);
+            //tv_channel_name.animate().scaleXBy(0.2f).scaleYBy(0.2f).setDuration(200).start();
         }
 
         @Override
         public void onItemClear(RecyclerView.ViewHolder viewHolder) {
-            Log.d("JACK8", "onItemFinish,position");
+            Log.d("JACK8", "onItemClear,position:"+viewHolder.getAdapterPosition());
             //tv_channel_name.setBackgroundColor(Color.parseColor("#f3f5f4"));
            // tv_channel_name.animate().scaleXBy(-0.2f).scaleYBy(-0.2f).setDuration(200).start();
         }
@@ -246,12 +246,12 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
 
         @Override
         public void bindView(int position, Channel channel) {
-            tv_channel_name.setText("+"+channel.getChannelName());
+            tv_channel_name.setText(String.format("+%s",channel.getChannelName()));
             iv_delete.setVisibility(View.GONE);
         }
 
         @OnClick(R.id.tv_channel_name)
-        public void onChannel() {
+        public void onClickChannel() {
             int currentPosition = getAdapterPosition();
             Channel channel = getItem(currentPosition);
 
@@ -260,13 +260,13 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
             View targetView = mRecyclerView.getLayoutManager().findViewByPosition(myLastPosition);
             if (mRecyclerView.indexOfChild(targetView) >= 0 && myLastPosition != RecyclerView.NO_POSITION) {
                 RecyclerView.LayoutManager manager = mRecyclerView.getLayoutManager();
-                int spanCount = ((GridLayoutManager) manager).getSpanCount();
+                int spanCount = ((GridLayoutManager)manager).getSpanCount();
                 int targetX = targetView.getLeft() + targetView.getWidth();
                 int targetY = targetView.getTop();
 
                 int myChannelSize = getItemCount(ChannelConst.TYPE_MY_CHANNEL);
                 if (myChannelSize % spanCount == 0) {
-                    View lastFourthView = mRecyclerView.getLayoutManager().findViewByPosition(getMyLastPosition() - 3);
+                    View lastFourthView = mRecyclerView.getLayoutManager().findViewByPosition(myLastPosition - 3);
                     targetX = lastFourthView.getLeft();
                     targetY = lastFourthView.getTop() + lastFourthView.getHeight();
                 }
