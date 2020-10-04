@@ -12,6 +12,8 @@ import com.github.kongpf8848.extablayout.demo.base.BaseLazyFragment;
 import com.github.kongpf8848.extablayout.demo.bean.Channel;
 import com.github.kongpf8848.extablayout.demo.util.DateUtils;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 
 public class ChannelFragment extends BaseLazyFragment {
 
@@ -53,6 +55,6 @@ public class ChannelFragment extends BaseLazyFragment {
     protected void onFragmentFirstVisible() {
         super.onFragmentFirstVisible();
         TextView tv = findViewById(R.id.tv_title);
-        tv.setText(channel.getChannelName()+"-"+ DateUtils.getCurrentDateTime());
+        tv.setText(channel.getChannelName());
     }
 }
