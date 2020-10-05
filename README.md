@@ -2,7 +2,7 @@
 优雅彻底的解决Fragment动态添加，删除不生效的问题，自定义PagerAdapter，替代系统中的FragmentStatePagerAdapter，实现Fragment的动态添加，删除操作，而不需要ViewPager重新设置Adapter,ViewPager中的Fragment不需要重新走生命周期
 
 ### 问题
-使用FragmentStatePagerAdapter管理Fragment时，添加或删除Fragment时，调用notifyDataSetChanged不生效，查看PagerAdapter源码可知，getItemPosition返回的值为POSITION_UNCHANGED，即位置没有改变，刷新自然就不生效了
+使用FragmentPagerAdapter或FragmentStatePagerAdapter管理Fragment时，添加或删除Fragment时，调用notifyDataSetChanged不生效，查看PagerAdapter源码可知，getItemPosition返回的值为POSITION_UNCHANGED，即位置没有改变，刷新自然就不生效了
 
 ```java
     /**
@@ -24,12 +24,12 @@
         return POSITION_UNCHANGED;
     }
 ```
-如果我们覆盖getItemPosition反复，简单粗暴的返回POSITION_NONE，调用notifyDataSetChanged，确实可以实现Fragment添加删除生效，但会导致所有的Fragment重建走生命周期流程，也不太合理。
+如果我们覆盖getItemPosition方法，简单粗暴的返回POSITION_NONE，调用notifyDataSetChanged，确实可以实现Fragment添加删除生效，但会导致所有的Fragment重建走生命周期流程，也不太合理。
 
 
 ### 解决办法
 
-覆盖PagerAdapter的getItemPosition方法，当Fragment对应的数据发生变化后，getItemPosition根据具体情况返回新的位置，而不是简单的返回POSITION_UNCHANGED或POSITION_NONE
+覆盖PagerAdapter的getItemPosition方法，当Fragment对应的数据发生变化后，getItemPosition方法根据具体情况返回新的位置，而不是简单的返回POSITION_UNCHANGED或POSITION_NONE
 
 ```java
     @Override
@@ -71,3 +71,67 @@
         return POSITION_UNCHANGED;
     }
 ```
+方法中用到了几个抽象方法，如下：
+```java
+
+    /**
+     * 获取指定位置对应的数据
+     * @param position
+     * @return
+     */
+    public abstract T getItemData(int position);
+
+    /**
+     * 判断新旧数据是否相等
+     * @param oldData
+     * @param newData
+     * @return
+     */
+    public abstract boolean dataEquals(T oldData, T newData);
+
+    /**
+     * 获取指定数据对应的位置
+     * @param data
+     * @return
+     */
+    public abstract int getDataPosition(T data);
+```
+
+### 使用
+简单的使用如下，具体使用可以参考demo
+
+```java
+public class TestAdapater extends FragmentStatePagerAdapterEx<Channel> {
+
+    public TestAdapater(FragmentManager fm) {
+        super(fm);
+    }
+
+    @Override
+    public Fragment getItem(int position) {
+        return null;
+    }
+
+    @Override
+    public int getCount() {
+        return 0;
+    }
+
+    @Override
+    public Channel getItemData(int position) {
+        return null;
+    }
+
+    @Override
+    public boolean dataEquals(Channel oldData, Channel newData) {
+        return false;
+    }
+
+    @Override
+    public int getDataPosition(Channel data) {
+        return 0;
+    }
+}
+```
+
+
