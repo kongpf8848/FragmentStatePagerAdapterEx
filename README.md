@@ -45,7 +45,9 @@
             T newData = getItemData(oldPosition);
             //如果旧数据和新数据相等，则位置不需要调整，返回POSITION_UNCHANGED
             if (dataEquals(oldData, newData)) {
-                Log.d(TAG, "++++++++++getItemPosition() called with: oldPosition:"+oldPosition+",POSITION_UNCHANGED");
+                if(DEBUG) {
+                    Log.d(TAG, "++++++++++getItemPosition() called with: oldPosition:" + oldPosition + ",POSITION_UNCHANGED");
+                }
                 return POSITION_UNCHANGED;
             } else {
                 /**
@@ -62,7 +64,9 @@
                 if (oldItemInfo != null) {
                     oldItemInfo.position = oldDataNewPosition;
                 }
-                Log.d(TAG,"----------oldposition:"+oldPosition+",newposition:"+oldDataNewPosition);
+                if(DEBUG) {
+                    Log.d(TAG, "----------oldposition:" + oldPosition + ",newposition:" + oldDataNewPosition);
+                }
                 return oldDataNewPosition;
             }
 
