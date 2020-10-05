@@ -7,4 +7,18 @@
     <string name="channel_more_add">点击添加频道</string>
     <string name="drag_sort">拖拽可以排序</string>
     <string name="enter_channel">点击进入频道</string>
+
+
+    <string name="about_text">" "<b><font size="20">FragmentStatePagerAdapterEx</font></b>"
+
+  By："<a href="https://github.com/kongpf8848">孔鹏飞</a>"
+
+  GitHub："<a href="https://github.com/kongpf8848/FragmentStatePagerAdapterEx">FragmentStatePagerAdapterEx</a>"
+
+"<b>实现ViewPager+Fragment布局中Fragment的动态添加,删除,排序,而不需要重新设置ViewPager的adapter</b>"
+
+原理：自定义PagerAdapter取代系统的FragmentStatePagerAdapter,覆盖getItemPosition方法，当Fragment数据变化时，getItemPosition方法返回Fragment新的位置
+
+ </string>
+
 </resources>
