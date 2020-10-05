@@ -103,6 +103,12 @@
 ```
 
 ### 使用
+
+添加依赖
+```groovy
+implementation 'com.github.kongpf8848:FragmentStatePagerAdapterEx:1.0.0'
+```
+
 简单的使用如下，具体使用可以参考demo
 ```java
 public class TestAdapater extends FragmentStatePagerAdapterEx<Channel> {
