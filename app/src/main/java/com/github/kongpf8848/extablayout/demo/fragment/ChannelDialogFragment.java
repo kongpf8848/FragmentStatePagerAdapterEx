@@ -67,7 +67,7 @@ public class ChannelDialogFragment extends DialogFragment implements OnItemTouch
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
-        ImmersionBar.with(this).statusBarColor(R.color.white).statusBarDarkFont(true).titleBar(R.id.toolbar).init();
+        ImmersionBar.with(this).statusBarColor(R.color.white).statusBarDarkFont(true).fitsSystemWindows(true).init();
 
         selectedChannelList = (List<Channel>) getArguments().getSerializable(AppPreferencesManager.SELECTED_CHANNEL_DATA);
         unselectedChannelList = (List<Channel>) getArguments().getSerializable(AppPreferencesManager.UNSELECTED_CHANNEL_DATA);

@@ -48,7 +48,11 @@ public class MainActivity extends BaseActivity implements IChannelManage {
     @Override
     public void onContentChanged() {
         super.onContentChanged();
-        ImmersionBar.with(this).statusBarColor(R.color.white).statusBarDarkFont(true).titleBar(R.id.toolbar).init();
+        ImmersionBar.with(this)
+                .statusBarColor(R.color.white)
+                .statusBarDarkFont(true)
+                .titleBar(R.id.toolbar)
+                .init();
     }
 
     @Override
@@ -63,20 +67,18 @@ public class MainActivity extends BaseActivity implements IChannelManage {
      * 初始化频道数据
      */
     private void initChannelData() {
-        String selectedChannelData= AppPreferencesManager.getInstance(this).getSelectedChannelData();
-        String unselectedChannelData= AppPreferencesManager.getInstance(this).getUnSelectedChannelData();
+        String selectedChannelData = AppPreferencesManager.getInstance(this).getSelectedChannelData();
+        String unselectedChannelData = AppPreferencesManager.getInstance(this).getUnSelectedChannelData();
         if (TextUtils.isEmpty(selectedChannelData)) {
-            selectedChannelList= ChannelConst.getDefaultChannleData();
-        }
-        else{
-            selectedChannelList= GsonUtils.toChannelList(selectedChannelData);
+            selectedChannelList = ChannelConst.getDefaultChannleData();
+        } else {
+            selectedChannelList = GsonUtils.toChannelList(selectedChannelData);
         }
 
         if (TextUtils.isEmpty(unselectedChannelData)) {
             unSelectedChannelList.clear();
-        }
-        else{
-            unSelectedChannelList= GsonUtils.toChannelList(unselectedChannelData);
+        } else {
+            unSelectedChannelList = GsonUtils.toChannelList(unselectedChannelData);
         }
 
     }
@@ -88,7 +90,7 @@ public class MainActivity extends BaseActivity implements IChannelManage {
 
         tabLayout.setSlidingIndicatorAnimType(ExTabLayout.AnimType.HALF_GLUE);
         tabLayout.setClickIndicatorAnimType(ExTabLayout.AnimType.NONE);
-        mainAdapter=new MainAdapter(getSupportFragmentManager(),selectedChannelList);
+        mainAdapter = new MainAdapter(getSupportFragmentManager(), selectedChannelList);
         viewPager.setAdapter(mainAdapter);
         tabLayout.setupWithViewPager(viewPager);
     }
@@ -96,15 +98,15 @@ public class MainActivity extends BaseActivity implements IChannelManage {
     /**
      * 频道管理
      */
-    @OnClick({R.id.menu_channel,R.id.iv_nav_menu})
-    public void onClickMenu(){
-        ChannelDialogFragment fragment=new ChannelDialogFragment();
-        Bundle bundle=new Bundle();
+    @OnClick({R.id.menu_channel, R.id.iv_nav_menu})
+    public void onClickMenu() {
+        ChannelDialogFragment fragment = new ChannelDialogFragment();
+        Bundle bundle = new Bundle();
         bundle.putSerializable(AppPreferencesManager.SELECTED_CHANNEL_DATA, (Serializable) selectedChannelList);
         bundle.putSerializable(AppPreferencesManager.UNSELECTED_CHANNEL_DATA, (Serializable) unSelectedChannelList);
-        bundle.putSerializable(ChannelConst.KEY_CURRENT_CHANNEL,mainAdapter.getItemData(viewPager.getCurrentItem()));
+        bundle.putSerializable(ChannelConst.KEY_CURRENT_CHANNEL, mainAdapter.getItemData(viewPager.getCurrentItem()));
         fragment.setArguments(bundle);
-        fragment.show(getSupportFragmentManager(),ChannelDialogFragment.class.getSimpleName());
+        fragment.show(getSupportFragmentManager(), ChannelDialogFragment.class.getSimpleName());
     }
 
 
@@ -116,15 +118,15 @@ public class MainActivity extends BaseActivity implements IChannelManage {
 
     @Override
     public void onSelectedChannel(Channel channel) {
-        int oldIndex= viewPager.getCurrentItem();
-        int newIndex=-1;
-        for (int i = 0; i <mainAdapter.getCount() ; i++) {
-            if(mainAdapter.dataEquals(mainAdapter.getItemData(i),channel)){
-                newIndex=i;
+        int oldIndex = viewPager.getCurrentItem();
+        int newIndex = -1;
+        for (int i = 0; i < mainAdapter.getCount(); i++) {
+            if (mainAdapter.dataEquals(mainAdapter.getItemData(i), channel)) {
+                newIndex = i;
                 break;
             }
         }
-        if(newIndex>=0 && oldIndex!=newIndex){
+        if (newIndex >= 0 && oldIndex != newIndex) {
             viewPager.setCurrentItem(newIndex);
         }
     }
@@ -133,15 +135,15 @@ public class MainActivity extends BaseActivity implements IChannelManage {
     public void onFinish(List<Channel> selected, List<Channel> unSelected) {
         this.selectedChannelList.clear();
         this.selectedChannelList.addAll(selected);
-        this.unSelectedChannelList=unSelected;
-        String selectedData="";
-        String unSelectedData="";
-        if(this.selectedChannelList!=null && this.selectedChannelList.size()>0){
-            selectedData= GsonUtils.fromChannelList(selectedChannelList);
+        this.unSelectedChannelList = unSelected;
+        String selectedData = "";
+        String unSelectedData = "";
+        if (this.selectedChannelList != null && this.selectedChannelList.size() > 0) {
+            selectedData = GsonUtils.fromChannelList(selectedChannelList);
         }
         AppPreferencesManager.getInstance(this).setSelectedChannelData(selectedData);
-        if(this.unSelectedChannelList!=null && this.unSelectedChannelList.size()>0){
-            unSelectedData= GsonUtils.fromChannelList(unSelectedChannelList);
+        if (this.unSelectedChannelList != null && this.unSelectedChannelList.size() > 0) {
+            unSelectedData = GsonUtils.fromChannelList(unSelectedChannelList);
         }
         AppPreferencesManager.getInstance(this).setUnSelectedChannelData(unSelectedData);
         mainAdapter.notifyDataSetChanged();

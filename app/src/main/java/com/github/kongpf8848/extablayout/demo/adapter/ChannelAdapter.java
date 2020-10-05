@@ -227,9 +227,7 @@ public class ChannelAdapter extends BaseRecyclerViewAdapter<Channel> {
             int myLastPosition = getMyLastPosition();
             Channel channel = getItem(currentPosition);
             channel.setViewType(ChannelConst.TYPE_MY_CHANNEL);//改为我的频道类型
-            if (myLastPosition == RecyclerView.NO_POSITION) {
-                myLastPosition = 0;
-            }
+
             if (onItemTouchHelperListener != null) {
                 onItemTouchHelperListener.onItemMove(currentPosition, myLastPosition + 1);
             }

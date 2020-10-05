@@ -20,8 +20,8 @@ public class ChannelConst {
 
     public static List<Channel> getDefaultChannleData(){
         List<Channel>list=new ArrayList<>();
-        list.add(new Channel("01", "关注", 0, ChannelConst.TYPE_MY_CHANNEL));
-        list.add(new Channel("02", "推荐", 0, ChannelConst.TYPE_MY_CHANNEL));
+        list.add(new Channel("01", "关注", 1, ChannelConst.TYPE_MY_CHANNEL));
+        list.add(new Channel("02", "推荐", 1, ChannelConst.TYPE_MY_CHANNEL));
         list.add(new Channel("03", "热榜", 1, ChannelConst.TYPE_MY_CHANNEL));
         list.add(new Channel("04", "快讯", 1, ChannelConst.TYPE_MY_CHANNEL));
 
