@@ -19,11 +19,14 @@ import com.gyf.immersionbar.ImmersionBar;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -129,13 +132,11 @@ public class MainActivity extends BaseActivity implements IChannelManage {
             AlertDialog.Builder builder=new AlertDialog.Builder(this);
             builder.setTitle("关于");
             builder.setMessage(R.string.about_text);
-            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-            builder.show();
+            builder.setPositiveButton("确定", null);
+            builder.setCancelable(true);
+            AlertDialog dialog=builder.create();
+            dialog.show();
+            ((TextView)dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
             return true;
         }
         return super.onOptionsItemSelected(item);
