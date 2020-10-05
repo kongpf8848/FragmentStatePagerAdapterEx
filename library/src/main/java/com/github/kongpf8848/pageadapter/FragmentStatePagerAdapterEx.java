@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public abstract class FragmentStatePagerAdapterEx<T> extends PagerAdapter {
     private static final String TAG = "FragmentStatePagerAdapt";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private final FragmentManager mFragmentManager;
     private FragmentTransaction mCurTransaction = null;
@@ -30,14 +30,32 @@ public abstract class FragmentStatePagerAdapterEx<T> extends PagerAdapter {
     }
 
     /**
-     * Return the Fragment associated with a specified position.
+     * 获取指定位置的Fragment
+     * @param position
+     * @return
      */
     public abstract Fragment getItem(int position);
 
+    /**
+     * 获取指定位置对应的数据
+     * @param position
+     * @return
+     */
     public abstract T getItemData(int position);
 
+    /**
+     * 判断新旧数据是否相等
+     * @param oldData
+     * @param newData
+     * @return
+     */
     public abstract boolean dataEquals(T oldData, T newData);
 
+    /**
+     * 获取指定数据对应的位置
+     * @param data
+     * @return
+     */
     public abstract int getDataPosition(T data);
 
     @Override
@@ -95,7 +113,9 @@ public abstract class FragmentStatePagerAdapterEx<T> extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        Log.d(TAG, "destroyItem() called with:position = [" + position + "]");
+        if(DEBUG) {
+            Log.d(TAG, "destroyItem() called with:position = [" + position + "]");
+        }
         ItemInfo ii = (ItemInfo) object;
 
         if (mCurTransaction == null) {
@@ -145,18 +165,27 @@ public abstract class FragmentStatePagerAdapterEx<T> extends PagerAdapter {
 
     @Override
     public int getItemPosition(Object object) {
-
         mNeedProcessCache = true;
         ItemInfo<T> itemInfo = (ItemInfo) object;
+        //获取数据对应的旧位置
         int oldPosition = mItemInfos.indexOf(itemInfo);
-
         if (oldPosition >= 0) {
+            //获取旧数据
             T oldData = itemInfo.data;
+            //获取旧位置对应的新数据
             T newData = getItemData(oldPosition);
+            //如果旧数据和新数据相等，则位置不需要调整，返回POSITION_UNCHANGED
             if (dataEquals(oldData, newData)) {
-                Log.d(TAG, "++++++++++getItemPosition() called with: oldPosition:"+oldPosition+",POSITION_UNCHANGED");
+                if(DEBUG) {
+                    Log.d(TAG, "++++++++++getItemPosition() called with: oldPosition:" + oldPosition + ",POSITION_UNCHANGED");
+                }
                 return POSITION_UNCHANGED;
             } else {
+                /**
+                 *  如果旧数据和新数据不相等，则位置需要调整，此时有两种情况：
+                 *  1.旧数据已经不存在，则表示Fragment已经被删除，此时应返回POSITION_NONE
+                 *  2.旧数据存在，只是位置发生了变动，则应返回新的位置
+                 */
                 ItemInfo<T> oldItemInfo = mItemInfos.get(oldPosition);
                 int oldDataNewPosition = getDataPosition(oldData);
                 if (oldDataNewPosition < 0) {
@@ -166,7 +195,9 @@ public abstract class FragmentStatePagerAdapterEx<T> extends PagerAdapter {
                 if (oldItemInfo != null) {
                     oldItemInfo.position = oldDataNewPosition;
                 }
-                Log.d(TAG,"----------oldposition:"+oldPosition+",newposition:"+oldDataNewPosition);
+                if(DEBUG) {
+                    Log.d(TAG, "----------oldposition:" + oldPosition + ",newposition:" + oldDataNewPosition);
+                }
                 return oldDataNewPosition;
             }
 

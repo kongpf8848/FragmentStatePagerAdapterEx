@@ -1,8 +1,14 @@
 package com.github.kongpf8848.pageadapter.demo.activity;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.TextView;
+
+import androidx.viewpager.widget.ViewPager;
 
 import com.github.kongpf8848.extablayout.ExTabLayout;
 import com.github.kongpf8848.pageadapter.demo.AppPreferencesManager;
@@ -15,18 +21,6 @@ import com.github.kongpf8848.pageadapter.demo.channel.IChannelManage;
 import com.github.kongpf8848.pageadapter.demo.fragment.ChannelDialogFragment;
 import com.github.kongpf8848.pageadapter.demo.util.GsonUtils;
 import com.gyf.immersionbar.ImmersionBar;
-
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-
-import android.text.SpannableString;
-import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
-import android.util.Patterns;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.TextView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -102,6 +96,7 @@ public class MainActivity extends BaseActivity implements IChannelManage {
         mainAdapter = new MainAdapter(getSupportFragmentManager(), selectedChannelList);
         viewPager.setAdapter(mainAdapter);
         tabLayout.setupWithViewPager(viewPager);
+
     }
 
     /**
