@@ -106,6 +106,9 @@
 
 添加依赖
 ```groovy
+
+maven { url 'https://dl.bintray.com/kongpf/maven' }
+
 implementation 'com.github.kongpf8848:FragmentStatePagerAdapterEx:1.0.0'
 ```
 
