@@ -5,7 +5,6 @@
 ![image](https://github.com/kongpf8848/FragmentStatePagerAdapterEx/blob/master/gif/1.gif)
 ![image](https://github.com/kongpf8848/FragmentStatePagerAdapterEx/blob/master/gif/2.gif)
 ![image](https://github.com/kongpf8848/FragmentStatePagerAdapterEx/blob/master/gif/3.gif)
-![image](https://github.com/kongpf8848/FragmentStatePagerAdapterEx/blob/master/gif/4.gif)
 
 ### 问题
 使用FragmentPagerAdapter或FragmentStatePagerAdapter管理Fragment时，添加或删除Fragment时，调用notifyDataSetChanged不生效，查看PagerAdapter源码可知，getItemPosition返回的值为POSITION_UNCHANGED，即位置没有改变，刷新自然就不生效了
