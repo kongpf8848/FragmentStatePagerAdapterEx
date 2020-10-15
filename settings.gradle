@@ -1,2 +1,3 @@
 include ':app',':library',':extablayout'
-rootProject.name = "FragmentStatePagerAdapterEx"
+project(':library').name = 'FragmentStatePagerAdapterEx'
+rootProject.name = "PagerAdapter"
