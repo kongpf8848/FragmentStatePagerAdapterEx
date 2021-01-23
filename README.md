@@ -75,7 +75,7 @@
         return POSITION_UNCHANGED;
     }
 ```
-方法中用到了几个抽象方法，如下：
+代码中定义了几个抽象方法，如下：
 
 ```java
 
