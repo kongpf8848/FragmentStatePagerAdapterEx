@@ -1,7 +1,7 @@
 # FragmentStatePagerAdapterEx
 优雅彻底的解决Fragment动态添加，删除不生效的问题，自定义PagerAdapter，替代系统中的FragmentStatePagerAdapter，实现Fragment的动态添加，删除操作，而不需要ViewPager重新设置Adapter,ViewPager中的Fragment不需要重新走生命周期
 
-### 问题分析
+## 问题分析
 使用FragmentPagerAdapter或FragmentStatePagerAdapter管理Fragment时，添加或删除Fragment时，调用notifyDataSetChanged不生效，查看PagerAdapter源码可知，getItemPosition返回的值为POSITION_UNCHANGED，即位置没有改变，刷新自然就不生效了
 
 ```java
@@ -27,7 +27,7 @@
 如果我们覆盖getItemPosition方法，简单粗暴的返回POSITION_NONE，调用notifyDataSetChanged，确实可以实现Fragment添加删除生效，但会导致所有的Fragment重建走生命周期流程，也不太合理。
 
 
-### 解决办法
+## 解决办法
 
 覆盖PagerAdapter的getItemPosition方法，当Fragment对应的数据发生变化后，getItemPosition方法根据具体情况返回新的位置，而不是简单的返回POSITION_UNCHANGED或POSITION_NONE
 
@@ -102,7 +102,7 @@
     public abstract int getDataPosition(T data);
 ```
 
-### 使用
+## 使用
 
 添加依赖
 ```groovy
@@ -168,7 +168,7 @@ public class TestAdapater extends FragmentStatePagerAdapterEx<Channel> {
     }
 }
 ```
-### 截图
+## 截图
 ![image](https://github.com/kongpf8848/FragmentStatePagerAdapterEx/blob/master/gif/1.gif)
 ![image](https://github.com/kongpf8848/FragmentStatePagerAdapterEx/blob/master/gif/2.gif)
 ![image](https://github.com/kongpf8848/FragmentStatePagerAdapterEx/blob/master/gif/3.gif)
