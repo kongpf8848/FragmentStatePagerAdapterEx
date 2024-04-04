@@ -169,8 +169,7 @@ public class TestAdapater extends FragmentStatePagerAdapterEx<Channel> {
 }
 ```
 ## 截图
-![image](https://github.com/kongpf8848/FragmentStatePagerAdapterEx/blob/master/gif/1.gif)
-![image](https://github.com/kongpf8848/FragmentStatePagerAdapterEx/blob/master/gif/2.gif)
-![image](https://github.com/kongpf8848/FragmentStatePagerAdapterEx/blob/master/gif/3.gif)
-![image](https://github.com/kongpf8848/FragmentStatePagerAdapterEx/blob/master/gif/4.gif)
+|1|2|3|4|
+|:---:|:---:|:---:|:---:|
+|![image](https://github.com/kongpf8848/FragmentStatePagerAdapterEx/blob/master/gif/1.gif)|![image](https://github.com/kongpf8848/FragmentStatePagerAdapterEx/blob/master/gif/2.gif)|![image](https://github.com/kongpf8848/FragmentStatePagerAdapterEx/blob/master/gif/3.gif)|![image](https://github.com/kongpf8848/FragmentStatePagerAdapterEx/blob/master/gif/4.gif)|
 
